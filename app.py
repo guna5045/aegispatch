@@ -62,6 +62,7 @@ from src.ui.scenario_views import (
 )
 from src.ui.styles import (
     SOC_CSS,
+    clean_html,
     render_agent_card,
     render_business_area_tag,
     render_capacity_bar,
@@ -72,6 +73,7 @@ from src.ui.styles import (
     render_metric_card,
     render_pipeline_story_cards,
     render_scheduled_badge,
+    render_security_approval_callout,
     render_severity_badge,
     render_status_pill,
     render_threat_badge,
@@ -122,17 +124,17 @@ def render_top_header(current_page: str) -> str:
                 <div style="font-size: 1.8rem;">🛡️</div>
                 <div>
                     <div class="aegis-brand-title">
-                        Aegis Patch
-                        <span class="aegis-brand-badge">SOC Enterprise</span>
+                        AEGIS PATCH
                     </div>
                     <div class="aegis-brand-subtitle">
-                        Context-Driven Vulnerability Prioritization & Remediation Orchestration
+                        Security Vulnerability Prioritization
                     </div>
                 </div>
             </div>
             <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                 <span class="status-badge status-operational">● Risk Engine Operational</span>
-                <span class="status-badge status-loaded">● Benchmark Active (60 Findings • 18 Hosts)</span>
+                <span class="status-badge status-loaded">● Benchmark Data Ready</span>
+                <span style="font-size: 0.78rem; color: #64748b; margin-left: 4px;">(60 Findings • 18 Hosts)</span>
             </div>
         </div>
         """,
@@ -153,12 +155,13 @@ def render_top_header(current_page: str) -> str:
         "Application Navigation",
         options=nav_options,
         index=initial_idx,
+        format_func=lambda opt: "Recommended Remediation Plan" if opt == "Patch Plan" else opt,
         horizontal=True,
         label_visibility="collapsed",
         key="top_nav_selector",
     )
 
-    st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
     return selected
 
 
@@ -166,7 +169,7 @@ def render_sidebar(findings_count: int, assets_count: int, is_operational: bool)
     """Render the sidebar navigation for backwards compatibility and test accessibility."""
     with st.sidebar:
         st.markdown("## Aegis Patch")
-        st.caption("Context-Driven Vulnerability Prioritization")
+        st.caption("Security Vulnerability Prioritization")
         st.markdown("---")
 
         # System Status Indicators
@@ -200,11 +203,8 @@ def render_sidebar(findings_count: int, assets_count: int, is_operational: bool)
             key="sidebar_nav_radio",
         )
 
-        st.markdown("---")
-        st.caption("Phase 9 • Multi-Agent Specialist Architecture")
-        st.caption("Deterministic Environmental Risk Engine")
-
     return page
+
 
 
 def render_overview_page(
@@ -215,34 +215,33 @@ def render_overview_page(
     """Render the executive security dashboard for Aegis Patch."""
     st.title("Aegis Patch")
     st.subheader("Context-Driven Vulnerability Prioritization and Remediation Orchestration")
-
-    # 1. Hero Statement: Find the vulnerabilities that actually matter
     st.markdown(
-        """
-        <div style="background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%); border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);">
-            <div style="font-size: 1.3rem; font-weight: 800; color: #0f172a; margin-bottom: 6px;">
+        clean_html("""
+        <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px 24px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);">
+            <div style="font-size: 1.4rem; font-weight: 800; color: #0f172a; margin-bottom: 6px;">
                 Find the vulnerabilities that actually matter.
             </div>
-            <div style="font-size: 0.95rem; color: #334155; line-height: 1.6; max-width: 960px;">
-                Traditional security scanners rate 60%+ of vulnerabilities as "Critical" or "High" based solely on published CVSS scores.
-                <strong>Aegis Patch</strong> eliminates alert fatigue by evaluating real-world threat activity (CISA KEV, EPSS),
-                enterprise topology, network reachability, and active compensating controls.
+            <div style="font-size: 0.94rem; color: #334155; line-height: 1.6; max-width: 980px;">
+                Aegis Patch looks beyond vulnerability severity. It evaluates available threat evidence, the affected system, business importance, network exposure, sensitive data and existing security protection to recommend what should be addressed first.
+            </div>
+            <div style="font-size: 0.78rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em; margin-top: 8px;">
+                Context-Aware Vulnerability Prioritization & Remediation
             </div>
         </div>
-        """,
+        """),
         unsafe_allow_html=True,
     )
 
-    # 2. Visual 6-Step Pipeline Flow
+    # 2. Visual 6-Step Workflow
     st.markdown(render_pipeline_story_cards(), unsafe_allow_html=True)
-    st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
 
     # 3. Dashboard Scoping Filters
     st.markdown(
         """
         <div class="section-header">
             <h3 class="section-title">Dashboard Scope & Filters</h3>
-            <div class="section-subtitle">Scope findings by intrinsic severity, Aegis decision, asset environment, and business criticality</div>
+            <div class="section-subtitle">Scope findings by intrinsic severity, Recommended Action, environment, and Business Importance</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -258,10 +257,10 @@ def render_overview_page(
         )
     with col_f2:
         sel_decision = st.selectbox(
-            "Aegis Decision",
+            "Recommended Action",
             options=["All", "ACT", "ATTEND", "PLAN", "TRACK"],
             index=0,
-            help="Filter by deterministic Aegis Patch decision band.",
+            help="Filter by Recommended Action: Fix Immediately (ACT), Review Soon (ATTEND), Plan Fix (PLAN), Monitor (TRACK).",
         )
     with col_f3:
         sel_env = st.selectbox(
@@ -272,10 +271,10 @@ def render_overview_page(
         )
     with col_f4:
         sel_crit = st.selectbox(
-            "Asset Criticality",
+            "Business Importance",
             options=["All", "CRITICAL", "HIGH", "MEDIUM", "LOW"],
             index=0,
-            help="Filter by asset business criticality.",
+            help="Filter by asset business criticality tier.",
         )
 
     # Compute filtered subset
@@ -297,175 +296,141 @@ def render_overview_page(
         st.info("No findings match the current filters. Please adjust filter selections above.")
         return
 
-    # 4. Humanized Executive KPIs
+    # 4. Humanized Executive KPIs with honest zero handling
     kpis = compute_dashboard_kpis(filtered_ids, findings, assets, assessments)
+    priority_count = kpis["priority_findings_count"]
+    plan_count = sum(
+        1 for fid in filtered_ids
+        if assessments.get(fid)
+        and assessments[fid].calculation_metadata.get("aegis_decision", assessments[fid].decision.value).upper() == "PLAN"
+    )
+    track_count = sum(
+        1 for fid in filtered_ids
+        if assessments.get(fid)
+        and assessments[fid].calculation_metadata.get("aegis_decision", assessments[fid].decision.value).upper() == "TRACK"
+    )
 
     col1, col2, col3, col4, col5 = st.columns(5)
     with col1:
         st.markdown(
             render_metric_card(
-                "Total Findings Scoped",
+                "Vulnerabilities Found",
                 str(kpis["findings_analyzed"]),
-                "Vulnerability findings in scope",
+                "Findings evaluated across systems",
             ),
             unsafe_allow_html=True,
         )
     with col2:
         st.markdown(
             render_metric_card(
-                "Requiring Action (ACT + ATTEND)",
-                str(kpis["priority_findings_count"]),
-                "Prioritized for immediate remediation",
+                "Systems Affected",
+                str(kpis["assets_affected"]),
+                "Unique hosts hosting findings",
             ),
             unsafe_allow_html=True,
         )
     with col3:
-        planned_monitored = len(filtered_ids) - kpis["priority_findings_count"]
         st.markdown(
             render_metric_card(
-                "Standard Cycle (PLAN + TRACK)",
-                str(planned_monitored),
-                "Safe for scheduled maintenance cycles",
+                "Critical Vulnerabilities",
+                str(kpis["critical_severity_count"]),
+                "Intrinsic CVSS = CRITICAL",
             ),
             unsafe_allow_html=True,
         )
     with col4:
+        p_caption = "No findings currently require immediate action" if priority_count == 0 else "Immediate remediation (ACT + ATTEND)"
         st.markdown(
             render_metric_card(
-                "Enterprise Hosts Affected",
-                str(kpis["assets_affected"]),
-                "Unique hosts requiring patches",
+                "Highest-Priority Findings",
+                str(priority_count),
+                p_caption,
             ),
             unsafe_allow_html=True,
         )
     with col5:
         st.markdown(
             render_metric_card(
-                "Average Environmental Risk",
+                "Average Aegis Risk",
                 f"{kpis['average_ers']} / 100",
                 "Contextual ERS mean across scope",
             ),
             unsafe_allow_html=True,
         )
 
-    # 5. "Why CVSS Alone Is Not Enough" Comparison Card
-    st.markdown(
-        """
-        <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 18px 22px; margin: 18px 0; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                <span style="font-size: 1.15rem;">⚖️</span>
-                <span style="font-size: 1.05rem; font-weight: 800; color: #0f172a;">Why CVSS Alone Is Not Enough</span>
-                <span style="font-size: 0.75rem; font-weight: 700; background-color: #eff6ff; color: #1d4ed8; padding: 2px 8px; border-radius: 9999px;">Real Enterprise Proof</span>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 10px;">
-                <div style="background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px 16px;">
-                    <div style="font-size: 0.8rem; font-weight: 700; color: #991b1b; text-transform: uppercase;">Traditional Scanner Prioritization</div>
-                    <div style="font-size: 0.95rem; font-weight: 700; color: #7f1d1d; margin-top: 4px;">Rated #1 Highest Emergency: FINDING-059 (CVSS 10.0)</div>
-                    <div style="font-size: 0.83rem; color: #991b1b; margin-top: 4px; line-height: 1.45;">
-                        Located on <code>airgap-lab-exploit-01</code> in an isolated sandbox. It has zero network route to the Internet and holds no sensitive data.
-                        Engineers waste critical emergency cycles patching an unreachable machine.
-                    </div>
-                </div>
-                <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 12px 16px;">
-                    <div style="font-size: 0.8rem; font-weight: 700; color: #166534; text-transform: uppercase;">Aegis Patch Environmental Prioritization</div>
-                    <div style="font-size: 0.95rem; font-weight: 700; color: #14532d; margin-top: 4px;">Correctly Prioritized: FINDING-001 & FINDING-006 (Elevated ERS)</div>
-                    <div style="font-size: 0.83rem; color: #166534; margin-top: 4px; line-height: 1.45;">
-                        Deprioritizes the isolated lab to <strong>TRACK (ERS 28.01)</strong>. Elevates Internet-facing production systems with real-world exploit code
-                        and customer data to <strong>ACT / PLAN</strong>, protecting actual business operations.
-                    </div>
-                </div>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    # 6. Side-by-Side Charts: Decision Distribution & Severity Distribution
-    col_chart_left, col_chart_right = st.columns(2)
-
-    with col_chart_left:
+    # Sub-KPI row for planning and monitoring distribution
+    col_sub1, col_sub2 = st.columns(2)
+    with col_sub1:
         st.markdown(
-            """
-            <div class="section-header">
-                <h3 class="section-title">Aegis Patch Decision Distribution</h3>
-                <div class="section-subtitle">Action categories calibrated by the deterministic environmental risk model</div>
+            f"""
+            <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #1d4ed8; border-radius: 6px; padding: 10px 14px; font-size: 0.86rem; color: #1e293b;">
+                📅 <strong>Findings Recommended for Planning:</strong> <strong style="color: #1d4ed8;">{plan_count}</strong>
+                <span style="color: #64748b; font-size: 0.8rem; margin-left: 6px;">(Queue for scheduled maintenance window)</span>
             </div>
             """,
             unsafe_allow_html=True,
         )
-        decision_counts = compute_decision_distribution(filtered_ids, assessments)
-        dec_chart = create_decision_chart(decision_counts)
-        st.altair_chart(dec_chart, width="stretch")
-
-    with col_chart_right:
+    with col_sub2:
         st.markdown(
-            """
-            <div class="section-header">
-                <h3 class="section-title">Vulnerability Severity Distribution</h3>
-                <div class="section-subtitle">Base scanner severity before environmental risk evaluation</div>
+            f"""
+            <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #64748b; border-radius: 6px; padding: 10px 14px; font-size: 0.86rem; color: #1e293b;">
+                👁️ <strong>Findings to Monitor:</strong> <strong style="color: #475569;">{track_count}</strong>
+                <span style="color: #64748b; font-size: 0.8rem; margin-left: 6px;">(Safe for continuous operational tracking)</span>
             </div>
             """,
             unsafe_allow_html=True,
         )
-        severity_counts = compute_severity_distribution(filtered_ids, findings)
-        sev_chart = create_severity_chart(severity_counts)
-        st.altair_chart(sev_chart, width="stretch")
 
-    # 7. Environmental Risk Score (ERS) Bands
+    # 5. "WHY AEGIS PATCH DOES MORE THAN CVSS" Factor Breakdown
     st.markdown(
         """
-        <div class="section-header">
-            <h3 class="section-title">Environmental Risk Overview</h3>
-            <div class="section-subtitle">Distribution across calibrated Aegis Patch decision score bands</div>
+        <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 18px 22px; margin: 16px 0; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);">
+            <div style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin-bottom: 6px;">
+                WHY AEGIS PATCH DOES MORE THAN CVSS
+            </div>
+            <div style="font-size: 0.88rem; color: #475569; line-height: 1.5; margin-bottom: 12px;">
+                CVSS measures technical flaw severity in a vacuum. Aegis Patch adds threat evidence, enterprise topology, data sensitivity, and compensating controls to recommend the right action:
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px 16px; font-size: 0.84rem; font-weight: 700; color: #1e293b;">
+                <span>CVSS Severity</span>
+                <span style="color: #94a3b8;">+</span>
+                <span>Threat Evidence</span>
+                <span style="color: #94a3b8;">+</span>
+                <span>Business Importance</span>
+                <span style="color: #94a3b8;">+</span>
+                <span>Network Exposure</span>
+                <span style="color: #94a3b8;">+</span>
+                <span>Data Sensitivity</span>
+                <span style="color: #94a3b8;">+</span>
+                <span>Existing Security Protection</span>
+                <span style="color: #1d4ed8;">=</span>
+                <span style="color: #1d4ed8;">Aegis Risk Score</span>
+                <span style="color: #15803d;">→</span>
+                <span style="color: #15803d;">Recommended Action</span>
+            </div>
         </div>
         """,
         unsafe_allow_html=True,
     )
 
-    ers_counts = compute_ers_distribution(filtered_ids, assessments)
-    ers_chart = create_ers_bands_chart(ers_counts)
-    st.altair_chart(ers_chart, width="stretch")
+    with st.expander("ℹ️ How Each Factor Influences Prioritization [i]"):
+        st.markdown(
+            """
+            - **CVSS Severity [i]:** Intrinsic flaw severity published in CVE databases. Weighted at 25% of unmitigated risk ($B = \\text{CVSS} \\times 10.0$).
+            - **Threat Evidence [i]:** Real-world exploitation activity. If listed in CISA KEV ($T = 100.0$); otherwise calculated from EPSS score and public exploit code ($T = \\text{EPSS} \\times 80 + \\text{PoC} \\times 20$). Weighted at 40%.
+            - **Business Importance [i]:** How critical the affected system is to core operations (Mission-critical = 100.0 down to Low = 25.0).
+            - **Network Exposure [i]:** Whether the system is Internet-facing (100.0), in a DMZ (70.0), internal (30.0), or air-gapped (0.0).
+            - **Data Sensitivity [i]:** Data classification held on the host (Confidential/PII = 100.0 down to Public = 20.0).
+            - **Existing Security Protection [i]:** Multiplicative discount ($M_{\\text{control}}$) applied for active controls (e.g. WAF, EDR, Network Segmentation).
+            """
+        )
 
-    # 8. Assets with Highest-Risk Findings
-    st.markdown(
-        """
-        <div class="section-header">
-            <h3 class="section-title">Assets with Highest-Risk Findings</h3>
-            <div class="section-subtitle">Enterprise assets ranked by peak Environmental Risk Score (ERS) among hosted findings</div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    ranked_assets = aggregate_assets_by_risk(filtered_ids, findings, assets, assessments)
-
-    asset_headers = ["Asset ID", "Hostname", "Business Area", "Environment", "Criticality", "Findings", "Highest ERS", "ACT", "ATTEND"]
-    asset_cols = st.columns([1.2, 2.2, 2.0, 1.2, 1.2, 0.9, 1.1, 0.8, 0.8])
-    for col, h in zip(asset_cols, asset_headers):
-        col.markdown(f"<span style='color: #475569; font-size: 0.78rem; font-weight: 700; text-transform: uppercase;'>{h}</span>", unsafe_allow_html=True)
-
-    st.markdown("<hr style='border-color: #e2e8f0; margin: 4px 0 8px 0;'>", unsafe_allow_html=True)
-
-    for a_row in ranked_assets[:8]:
-        asset_obj = assets.get(a_row["asset_id"])
-        biz_area = derive_business_area(None, asset_obj)
-        row_cols = st.columns([1.2, 2.2, 2.0, 1.2, 1.2, 0.9, 1.1, 0.8, 0.8])
-        row_cols[0].markdown(f"`{a_row['asset_id']}`")
-        row_cols[1].markdown(f"**{a_row['hostname']}**")
-        row_cols[2].markdown(f"{biz_area}")
-        row_cols[3].markdown(f"{a_row['environment']}")
-        row_cols[4].markdown(f"{a_row['criticality']}")
-        row_cols[5].markdown(f"{a_row['findings_count']}")
-        row_cols[6].markdown(f"<strong style='color: #1d4ed8;'>{a_row['highest_ers']}</strong>", unsafe_allow_html=True)
-        row_cols[7].markdown(f"{a_row['act_count']}")
-        row_cols[8].markdown(f"{a_row['attend_count']}")
-
-    # 9. Priority Preview (Top 5 Findings)
+    # 6. Priority Preview (Top Findings)
     st.markdown(
         """
         <div class="section-header">
             <h3 class="section-title">Priority Preview: Top Findings</h3>
-            <div class="section-subtitle">Top 5 highest Environmental Risk Score (ERS) findings requiring remediation attention</div>
+            <div class="section-subtitle">Highest Aegis Risk Score (ERS) findings requiring remediation attention</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -473,10 +438,10 @@ def render_overview_page(
 
     top_5 = get_priority_preview(filtered_ids, findings, assets, assessments, limit=5)
 
-    headers = ["Rank", "CVE ID", "Business Area", "Target Host", "Severity", "Base CVSS", "ERS Score", "Decision", "Tier"]
-    header_cols = st.columns([0.8, 1.8, 2.0, 2.0, 1.1, 1.0, 1.2, 1.4, 1.1])
+    headers = ["Priority", "Vulnerability", "Business Area", "Affected System", "Environment", "Severity", "CVSS", "Aegis Risk", "Recommended Action"]
+    header_cols = st.columns([0.8, 1.8, 2.2, 2.0, 1.2, 1.0, 0.9, 1.1, 1.4])
     for col, h in zip(header_cols, headers):
-        col.markdown(f"<span style='color: #475569; font-size: 0.78rem; font-weight: 700; text-transform: uppercase;'>{h}</span>", unsafe_allow_html=True)
+        col.markdown(f"<span style='color: #475569; font-size: 0.76rem; font-weight: 700; text-transform: uppercase;'>{h}</span>", unsafe_allow_html=True)
 
     st.markdown("<hr style='border-color: #e2e8f0; margin: 4px 0 10px 0;'>", unsafe_allow_html=True)
 
@@ -484,16 +449,19 @@ def render_overview_page(
         f_obj = findings.get(item["finding_id"])
         a_obj = assets.get(item["asset_id"])
         biz_area = derive_business_area(f_obj, a_obj)
-        row_cols = st.columns([0.8, 1.8, 2.0, 2.0, 1.1, 1.0, 1.2, 1.4, 1.1])
+        row_cols = st.columns([0.8, 1.8, 2.2, 2.0, 1.2, 1.0, 0.9, 1.1, 1.4])
         row_cols[0].markdown(f"#{rank_idx}")
         row_cols[1].markdown(f"**{item['cve_id']}**")
         row_cols[2].markdown(f"{biz_area}")
-        row_cols[3].markdown(f"{item['hostname']}")
-        row_cols[4].markdown(f"{item['severity']}")
-        row_cols[5].markdown(f"{item['cvss_score']}")
-        row_cols[6].markdown(f"<strong style='color: #1d4ed8;'>{item['environmental_risk_score']}</strong>", unsafe_allow_html=True)
-        row_cols[7].markdown(render_decision_badge(item["aegis_decision"]), unsafe_allow_html=True)
-        row_cols[8].markdown(f"**{item['risk_tier']}**")
+        row_cols[3].markdown(f"<code>{item['hostname']}</code>", unsafe_allow_html=True)
+        row_cols[4].markdown(f"{a_obj.environment.value if a_obj else 'Production'}")
+        row_cols[5].markdown(f"{item['severity']}")
+        row_cols[6].markdown(f"{item['cvss_score']:.1f}")
+        row_cols[7].markdown(f"<strong style='color: #1d4ed8;'>{item['environmental_risk_score']:.2f}</strong>", unsafe_allow_html=True)
+        row_cols[8].markdown(render_decision_badge(item["aegis_decision"]), unsafe_allow_html=True)
+
+    st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
+
 
     # 10. Asset Context Deep Dive
     st.markdown(
@@ -616,12 +584,12 @@ def render_vulnerabilities_page(
 
     # 1. Header & Scoping Context
     st.markdown(
-        """
+        clean_html("""
         <div class="section-header">
-            <h3 class="section-title">Prioritized Vulnerabilities Queue</h3>
-            <div class="section-subtitle">Multi-criteria filtering and Environmental Risk Score (ERS) ranking</div>
+            <h3 class="section-title">VULNERABILITIES</h3>
+            <div class="section-subtitle">See which vulnerabilities deserve attention first — and why.</div>
         </div>
-        """,
+        """),
         unsafe_allow_html=True,
     )
 
@@ -631,7 +599,7 @@ def render_vulnerabilities_page(
     with col_search:
         search_query = st.text_input(
             "Search findings",
-            placeholder="Search by CVE, finding ID, package name, or target hostname...",
+            placeholder="Search by CVE, vulnerability ID, package, system, or hostname...",
             key="vuln_search_input",
             label_visibility="collapsed",
         )
@@ -649,35 +617,42 @@ def render_vulnerabilities_page(
 
     with col_sev:
         sel_sev = st.selectbox(
-            "Vulnerability Severity",
+            "Severity",
             options=["All", "CRITICAL", "HIGH", "MEDIUM", "LOW"],
             key="vuln_sev_select",
             help="Filter by base CVSS severity.",
         )
     with col_dec:
         sel_dec = st.selectbox(
-            "Aegis Decision",
+            "Recommended Action",
             options=["All", "ACT", "ATTEND", "PLAN", "TRACK"],
+            format_func=lambda d: {
+                "All": "All Actions",
+                "ACT": "Fix Immediately (ACT)",
+                "ATTEND": "Review Soon (ATTEND)",
+                "PLAN": "Plan Fix (PLAN)",
+                "TRACK": "Monitor (TRACK)",
+            }.get(d, d),
             key="vuln_dec_select",
             help="Filter by Aegis action recommendation.",
         )
     with col_tier:
         sel_tier = st.selectbox(
-            "Risk Tier",
+            "Risk Level",
             options=["All", "CRITICAL", "HIGH", "MEDIUM", "LOW"],
             key="vuln_tier_select",
-            help="Filter by Environmental Risk Tier.",
+            help="Filter by Aegis Risk Level (Risk Tier).",
         )
     with col_env:
         sel_env = st.selectbox(
-            "Deployment Environment",
+            "Environment",
             options=["All", "PRODUCTION", "STAGING", "DEVELOPMENT", "TESTING"],
             key="vuln_env_select",
             help="Filter by asset environment.",
         )
     with col_crit:
         sel_crit = st.selectbox(
-            "Asset Criticality",
+            "Business Importance",
             options=["All", "CRITICAL", "HIGH", "MEDIUM", "LOW"],
             key="vuln_crit_select",
             help="Filter by asset business criticality.",
@@ -757,12 +732,12 @@ def render_vulnerabilities_page(
 
     # 5. Prioritized Findings Queue Table & Deep-Dive Selector
     st.markdown(
-        """
+        clean_html("""
         <div class="section-header">
             <h3 class="section-title">Prioritized Findings Queue</h3>
-            <div class="section-subtitle">Ranked deterministically by Environmental Risk Score (ERS)</div>
+            <div class="section-subtitle">Ranked deterministically by Aegis Risk Score (ERS)</div>
         </div>
-        """,
+        """),
         unsafe_allow_html=True,
     )
 
@@ -794,7 +769,7 @@ def render_vulnerabilities_page(
     with col_action:
         st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
         if st.button(
-            "Investigate Finding",
+            "View Investigation",
             key="btn_inspect_finding",
             use_container_width=True,
         ):
@@ -804,20 +779,27 @@ def render_vulnerabilities_page(
     # Formatted DataFrame presentation with Business Area
     df_data = []
     for r in records:
+        dec_label = {
+            "ACT": "Fix Immediately (ACT)",
+            "ATTEND": "Review Soon (ATTEND)",
+            "PLAN": "Plan Fix (PLAN)",
+            "TRACK": "Monitor (TRACK)",
+        }.get(r["aegis_decision"], r["aegis_decision"])
+
         df_data.append(
             {
-                "Rank": f"#{r['priority_rank']}",
+                "Priority": f"#{r['priority_rank']}",
+                "Vulnerability": r["cve_id"],
                 "Finding ID": r["finding_id"],
                 "CVE ID": r["cve_id"],
                 "Business Area": r.get("business_area", "Not specified"),
-                "Target Hostname": r["hostname"],
-                "Environment": r["environment"],
-                "Criticality": r["criticality"],
-                "Severity": r["severity"],
+                "Affected System": r["hostname"],
+                "Environment": r["environment"].capitalize(),
+                "Severity": r["severity"].capitalize(),
                 "CVSS": r["cvss_score"],
+                "Aegis Risk": r["environmental_risk_score"],
                 "ERS Score": r["environmental_risk_score"],
-                "Aegis Decision": r["aegis_decision"],
-                "Risk Tier": r["risk_tier"],
+                "Recommended Action": dec_label,
             }
         )
 
@@ -828,18 +810,18 @@ def render_vulnerabilities_page(
         width="stretch",
         hide_index=True,
         column_config={
-            "Rank": st.column_config.TextColumn("Rank", width="small"),
-            "Finding ID": st.column_config.TextColumn("Finding ID", width="small"),
-            "CVE ID": st.column_config.TextColumn("CVE ID", width="medium"),
+            "Priority": st.column_config.TextColumn("Priority", width="small"),
+            "Vulnerability": st.column_config.TextColumn("Vulnerability", width="medium"),
             "Business Area": st.column_config.TextColumn("Business Area", width="medium"),
-            "Target Hostname": st.column_config.TextColumn("Target Hostname", width="medium"),
-            "Environment": st.column_config.TextColumn("Env", width="small"),
-            "Criticality": st.column_config.TextColumn("Crit", width="small"),
+            "Affected System": st.column_config.TextColumn("Affected System", width="medium"),
+            "Environment": st.column_config.TextColumn("Environment", width="small"),
             "Severity": st.column_config.TextColumn("Severity", width="small"),
             "CVSS": st.column_config.NumberColumn("CVSS", format="%.1f", width="small"),
-            "ERS Score": st.column_config.NumberColumn("ERS Score", format="%.2f", width="small"),
-            "Aegis Decision": st.column_config.TextColumn("Aegis Decision", width="small"),
-            "Risk Tier": st.column_config.TextColumn("Risk Tier", width="small"),
+            "Aegis Risk": st.column_config.NumberColumn("Aegis Risk", format="%.2f", width="small"),
+            "Recommended Action": st.column_config.TextColumn("Recommended Action", width="medium"),
+            "Finding ID": None,
+            "CVE ID": None,
+            "ERS Score": None,
         },
     )
 
@@ -893,52 +875,93 @@ def render_scenarios_page(
 def render_how_it_works_page() -> None:
     """Render the architectural deep-dive page explaining Aegis Patch and the 6 specialist agents."""
     st.markdown(
-        """
+        clean_html("""
         <div class="section-header">
-            <h2 class="section-title" style="font-size: 1.6rem;">How Aegis Patch Works</h2>
-            <div class="section-subtitle">Architectural overview for security practitioners, students, and evaluators</div>
+            <h2 class="section-title" style="font-size: 1.6rem;">HOW AEGIS PATCH WORKS</h2>
+            <div class="section-subtitle">Six specialist agents investigate a vulnerability from different perspectives before a remediation recommendation is verified.</div>
         </div>
-        """,
+        """),
         unsafe_allow_html=True,
     )
 
-    # 1. The Core Problem
+    # Architectural Pipeline Flow Visual
     st.markdown(
-        """
+        clean_html("""
+        <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 18px 22px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);">
+            <div style="font-size: 0.8rem; font-weight: 800; color: #1e3a8a; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;">
+                End-to-End Specialist Workflow
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 0.82rem; font-weight: 700; color: #0f172a;">
+                <span style="background: #f1f5f9; padding: 6px 10px; border-radius: 4px; border: 1px solid #cbd5e1;">Vulnerability Found</span>
+                <span style="color: #94a3b8;">→</span>
+                <span style="background: #eff6ff; padding: 6px 10px; border-radius: 4px; border: 1px solid #bfdbfe; color: #1e40af;">1. Scan Intake</span>
+                <span style="color: #94a3b8;">→</span>
+                <span style="background: #eff6ff; padding: 6px 10px; border-radius: 4px; border: 1px solid #bfdbfe; color: #1e40af;">2. Threat & Exploit Check</span>
+                <span style="color: #94a3b8;">→</span>
+                <span style="background: #eff6ff; padding: 6px 10px; border-radius: 4px; border: 1px solid #bfdbfe; color: #1e40af;">3. Business & Asset Context</span>
+                <span style="color: #94a3b8;">→</span>
+                <span style="background: #eff6ff; padding: 6px 10px; border-radius: 4px; border: 1px solid #bfdbfe; color: #1e40af;">4. Risk Decision</span>
+                <span style="color: #94a3b8;">→</span>
+                <span style="background: #eff6ff; padding: 6px 10px; border-radius: 4px; border: 1px solid #bfdbfe; color: #1e40af;">5. Patch Planning</span>
+                <span style="color: #94a3b8;">→</span>
+                <span style="background: #eff6ff; padding: 6px 10px; border-radius: 4px; border: 1px solid #bfdbfe; color: #1e40af;">6. Verification</span>
+                <span style="color: #94a3b8;">→</span>
+                <span style="background: #f0fdf4; padding: 6px 10px; border-radius: 4px; border: 1px solid #bbf7d0; color: #166534;">Security Operations Approval</span>
+            </div>
+        </div>
+        """),
+        unsafe_allow_html=True,
+    )
+
+    # 1. Why Specialist Agents?
+    st.markdown(
+        clean_html("""
         <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);">
             <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin-bottom: 8px;">
-                1. The Crisis in Traditional Vulnerability Management
+                WHY SPECIALIST AGENTS?
             </h3>
-            <p style="font-size: 0.9rem; color: #334155; line-height: 1.6; margin-bottom: 12px;">
-                Every enterprise security team is inundated with thousands of scanner alerts. When vulnerability tools report that hundreds of findings are "Critical" (CVSS 9.0–10.0), security teams face <strong>alert fatigue</strong> and cannot determine what to fix first.
+            <p style="font-size: 0.9rem; color: #334155; line-height: 1.6; margin-bottom: 16px;">
+                Security vulnerability prioritization requires several different types of analysis. Aegis Patch separates these responsibilities into specialist agents. Each agent focuses on one bounded task, while the Verification Agent independently checks the final recommendation.
             </p>
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; font-size: 0.85rem;">
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; font-size: 0.85rem;">
                 <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 14px; border-radius: 6px;">
-                    <strong style="color: #0f172a;">Static CVSS Blindness:</strong>
-                    <div style="color: #475569; margin-top: 4px;">CVSS measures theoretical severity in a vacuum. It does not know if a host is public on the Internet or locked in an air-gapped lab.</div>
+                    <strong style="color: #1e40af;">1. Scan Intake:</strong>
+                    <div style="color: #475569; margin-top: 4px;">"What did the scanner find?" Normalizes schema and dedupes scanner outputs.</div>
                 </div>
                 <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 14px; border-radius: 6px;">
-                    <strong style="color: #0f172a;">Threat Reality Gap:</strong>
-                    <div style="color: #475569; margin-top: 4px;">Only ~4% of published vulnerabilities are ever actively weaponized by adversaries. Treating unweaponized flaws as emergencies wastes critical engineering hours.</div>
+                    <strong style="color: #1e40af;">2. Threat & Exploit Check:</strong>
+                    <div style="color: #475569; margin-top: 4px;">"How strong is the real-world threat evidence?" Queries CISA KEV and EPSS feeds.</div>
                 </div>
                 <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 14px; border-radius: 6px;">
-                    <strong style="color: #0f172a;">Ignored Compensating Controls:</strong>
-                    <div style="color: #475569; margin-top: 4px;">Active Web Application Firewalls (WAF) and Endpoint Detection & Response (EDR) block exploit paths. Traditional scanners ignore them and demand emergency outages.</div>
+                    <strong style="color: #1e40af;">3. Business & Asset Context:</strong>
+                    <div style="color: #475569; margin-top: 4px;">"Where is the vulnerability and how important is the system?" Investigates CMDB & controls.</div>
+                </div>
+                <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 14px; border-radius: 6px;">
+                    <strong style="color: #1e40af;">4. Risk Decision:</strong>
+                    <div style="color: #475569; margin-top: 4px;">"How risky is it in this environment?" Computes deterministic Aegis Risk Score.</div>
+                </div>
+                <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 14px; border-radius: 6px;">
+                    <strong style="color: #1e40af;">5. Patch Planning:</strong>
+                    <div style="color: #475569; margin-top: 4px;">"What should be fixed within the available maintenance capacity?" Solves 0/1 knapsack.</div>
+                </div>
+                <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 14px; border-radius: 6px;">
+                    <strong style="color: #166534;">6. Verification:</strong>
+                    <div style="color: #475569; margin-top: 4px;">"Is the recommendation supported and internally consistent?" 4-dimension audit.</div>
                 </div>
             </div>
         </div>
-        """,
+        """),
         unsafe_allow_html=True,
     )
 
-    # 2. The 6 Phase 9 Specialist Agents
+    # 2. The 6 Specialist Agents Cards
     st.markdown(
-        """
+        clean_html("""
         <div class="section-header">
-            <h3 class="section-title">2. The Six Specialist Agents Architecture</h3>
-            <div class="section-subtitle">A modular multi-agent system where each specialist executes bounded deterministic security tools</div>
+            <h3 class="section-title">Specialist Agent Responsibilities & Tools</h3>
+            <div class="section-subtitle">Each specialist agent executes bounded deterministic tools through the Tool Registry</div>
         </div>
-        """,
+        """),
         unsafe_allow_html=True,
     )
 
@@ -960,11 +983,11 @@ def render_how_it_works_page() -> None:
         st.markdown(
             render_agent_card(
                 3,
-                "Asset Criticality Specialist Agent",
+                "Business & Asset Context Agent",
                 "Context Specialist",
                 "Queries enterprise CMDB to determine affected asset topology, lifecycle environment, data classification, and active controls.",
                 "Derives network boundary exposure and applies compensating mitigation multipliers (M_control).",
-                ["cmdb_asset_correlator", "compensating_control_evaluator", "business_impact_assessor"],
+                ["query_asset_cmdb", "get_network_reachability", "query_rag_policy"],
             ),
             unsafe_allow_html=True,
         )
@@ -972,11 +995,11 @@ def render_how_it_works_page() -> None:
         st.markdown(
             render_agent_card(
                 5,
-                "Patch Plan Specialist Agent",
+                "Patch Planning Specialist Agent",
                 "Optimization Specialist",
                 "Formulates 0/1 knapsack mathematical optimization under maintenance capacity constraints (e.g. 16h window).",
                 "Ranks candidates by Risk Reduction per Engineering Hour and plans safe deployment sequences.",
-                ["patch_window_analyzer", "sla_deadline_calculator", "knapsack_scheduler"],
+                ["optimize_patch_capacity", "resolve_package_dependencies", "simulate_risk_reduction"],
             ),
             unsafe_allow_html=True,
         )
@@ -985,11 +1008,11 @@ def render_how_it_works_page() -> None:
         st.markdown(
             render_agent_card(
                 2,
-                "Exploitability Specialist Agent",
+                "Threat & Exploit Check Agent",
                 "Threat Specialist",
                 "Cross-references real-world adversary threat feeds: CISA Known Exploited Vulnerabilities (KEV), First.org EPSS, and public exploit code.",
                 "Computes empirical threat score (T) and identifies weaponized zero-day vectors.",
-                ["cisa_kev_lookup", "epss_score_evaluator", "poc_repository_search"],
+                ["lookup_cisa_kev", "query_epss", "query_osv_database"],
             ),
             unsafe_allow_html=True,
         )
@@ -997,11 +1020,11 @@ def render_how_it_works_page() -> None:
         st.markdown(
             render_agent_card(
                 4,
-                "Risk Combination Specialist Agent",
+                "Risk Decision Specialist Agent",
                 "Calculation Specialist",
                 "Applies deterministic Environmental Risk Score (ERS) formula combining Base (B), Threat (T), and Environmental (E) factors.",
-                "Assigns transparent action decisions: ACT (≥85), ATTEND (65–84), PLAN (40–64), TRACK (<40).",
-                ["evaluate_base_risk", "evaluate_environmental_multiplier", "derive_aegis_decision"],
+                "Assigns transparent action recommendations: Fix Immediately (ACT), Review Soon (ATTEND), Plan Fix (PLAN), Monitor (TRACK).",
+                ["calculate_environmental_risk", "map_ssvc_decision"],
             ),
             unsafe_allow_html=True,
         )
@@ -1012,62 +1035,61 @@ def render_how_it_works_page() -> None:
                 "Verification Specialist Agent",
                 "Audit Specialist",
                 "Executes 4-dimension independent verification: checks score math, grounds factual claims, validates plan bounds, and confirms cross-evidence consistency.",
-                "Guarantees 0% hallucination and defensible audit trails before human sign-off.",
-                ["verify_score_derivation", "verify_claim_grounding", "verify_plan_constraints", "verify_cross_evidence"],
+                "Guarantees 0% hallucination and defensible audit trails before Security Operations review.",
+                ["verify_score_derivation", "detect_hallucinated_claims", "validate_plan_constraints"],
             ),
             unsafe_allow_html=True,
         )
 
     st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
 
-    # 3. Why Multi-Agent vs Black Box LLM
-    st.markdown(
-        """
-        <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);">
-            <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin-bottom: 8px;">
-                3. Why Multi-Agent Orchestration Instead of a Black Box LLM?
-            </h3>
-            <p style="font-size: 0.9rem; color: #334155; line-height: 1.6; margin-bottom: 12px;">
-                In enterprise cybersecurity, probabilistic hallucinations are unacceptable. A black-box language model cannot be trusted to invent arbitrary risk numbers or silently push updates to production servers.
-            </p>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-size: 0.85rem;">
-                <div style="border-left: 3px solid #16a34a; padding-left: 12px;">
-                    <strong style="color: #166534;">Deterministic Mathematical Grounding:</strong>
-                    <div style="color: #475569; margin-top: 4px;">Every score is calculated using deterministic formulas with bounded inputs. No scores are hallucinated.</div>
+    # 3. Expandable Technical Architecture
+    with st.expander("TECHNICAL ARCHITECTURE — Layered System Design", expanded=False):
+        st.markdown(
+            clean_html("""
+            <div style="font-size: 0.88rem; color: #334155; line-height: 1.7;">
+                <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 14px 18px; margin-bottom: 14px; font-family: monospace; font-size: 0.85rem; color: #0f172a;">
+                    <strong>Enterprise Architecture Hierarchy:</strong><br/>
+                    User Interface (Streamlit Presentation Layer)<br/>
+                    &nbsp;&nbsp;↓<br/>
+                    Application / API Layer (FastAPI REST Endpoints & Orchestration Services)<br/>
+                    &nbsp;&nbsp;↓<br/>
+                    Workflow / Agent Layer (Specialist Contracts & State Transition)<br/>
+                    &nbsp;&nbsp;↓<br/>
+                    Six Specialist Agents (Bounded Task Responsibilities)<br/>
+                    &nbsp;&nbsp;↓<br/>
+                    Tool Registry (Deterministic Security Tools & Verification Auditors)<br/>
+                    &nbsp;&nbsp;↓<br/>
+                    Database / Benchmark Evidence (CMDB, CISA KEV, EPSS Feeds, Scans)
                 </div>
-                <div style="border-left: 3px solid #1d4ed8; padding-left: 12px;">
-                    <strong style="color: #1e3a8a;">Separation of Concerns:</strong>
-                    <div style="color: #475569; margin-top: 4px;">Each specialist agent has a single, verifiable responsibility and communicates structured Pydantic data models.</div>
-                </div>
-                <div style="border-left: 3px solid #ea580c; padding-left: 12px;">
-                    <strong style="color: #c2410c;">Mandatory Human-in-the-Loop Safety:</strong>
-                    <div style="color: #475569; margin-top: 4px;">Aegis Patch prioritizes and plans, but never executes unattended changes to production infrastructure without explicit human operator approval.</div>
-                </div>
-                <div style="border-left: 3px solid #7c3aed; padding-left: 12px;">
-                    <strong style="color: #6b21a8;">Independent 4-Dimension Audit:</strong>
-                    <div style="color: #475569; margin-top: 4px;">The Verification Agent operates as an adversarial auditor, rejecting any recommendation whose claims cannot be traced to source evidence.</div>
-                </div>
+                <p><strong>Core Architectural Principles:</strong></p>
+                <ul>
+                    <li><strong>Tool Registry Integration:</strong> Specialist agents invoke deterministic security tools through the central Tool Registry.</li>
+                    <li><strong>Deterministic Grounding:</strong> Critical risk calculations, priority rankings, and knapsack optimizations remain 100% deterministic and reproducible.</li>
+                    <li><strong>Independent Verification:</strong> The Verification Agent functions as an adversarial audit gate, validating score derivations and plan bounds before any human review.</li>
+                    <li><strong>Infrastructure Safety Guarantee:</strong> No agent directly modifies production infrastructure, runs shell commands, or initiates unattended live patches.</li>
+                    <li><strong>State Status Model:</strong> Agent executions follow an explicit deterministic status model (<code>WAITING</code>, <code>RUNNING</code>, <code>COMPLETED</code>, <code>FAILED</code>, <code>NOT_APPLICABLE</code>, <code>NOT_AVAILABLE</code>).</li>
+                </ul>
             </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+            """),
+            unsafe_allow_html=True,
+        )
 
     # 4. Technology Stack
     st.markdown(
-        """
-        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 18px 22px;">
-            <h4 style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin-bottom: 8px;">4. Technology Stack & Verification Foundation</h4>
+        clean_html("""
+        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 18px 22px; margin-top: 18px;">
+            <h4 style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin-bottom: 8px;">Technology Stack & Verification Foundation</h4>
             <div style="display: flex; gap: 20px; font-size: 0.84rem; color: #475569; flex-wrap: wrap;">
                 <span>🐍 <strong>Core:</strong> Python 3.12 (Strict typing)</span>
                 <span>🛡️ <strong>Validation:</strong> Pydantic v2 schemas</span>
                 <span>⚡ <strong>Backend API:</strong> FastAPI REST endpoints</span>
                 <span>🎨 <strong>UI Framework:</strong> Streamlit (Reactive light theme)</span>
                 <span>📊 <strong>Visualizations:</strong> Altair (Interactive Vega-Lite)</span>
-                <span>✅ <strong>Test Harness:</strong> Pytest (607+ verification tests passing)</span>
+                <span>✅ <strong>Test Harness:</strong> Pytest (Automated verification suite)</span>
             </div>
         </div>
-        """,
+        """),
         unsafe_allow_html=True,
     )
 

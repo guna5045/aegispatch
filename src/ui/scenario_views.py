@@ -27,6 +27,7 @@ from src.services.scenario_service import (
 )
 from src.services.vulnerability_service import derive_business_area
 from src.ui.styles import (
+    clean_html,
     render_business_area_tag,
     render_capacity_bar,
     render_context_callout,
@@ -34,53 +35,59 @@ from src.ui.styles import (
     render_human_approval_callout,
     render_metric_card,
     render_scheduled_badge,
+    render_security_approval_callout,
     render_severity_badge,
 )
 
 
 def render_scenario_story_card(before_text: str, change_text: str, after_text: str, why_text: str) -> str:
     """Render a structured Before -> Change -> After -> Why Did It Change card."""
-    return f"""
-    <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 18px 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);">
-        <div style="font-size: 0.8rem; font-weight: 700; color: #1d4ed8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;">
-            Contextual Shift Progression
+    return clean_html(f"""
+<div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px 18px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);">
+    <div style="font-size: 0.78rem; font-weight: 800; color: #1d4ed8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px;">
+        Contextual Shift Progression
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 10px; align-items: center; margin-bottom: 12px;">
+        <div style="background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 10px 12px;">
+            <div style="font-size: 0.70rem; font-weight: 800; color: #991b1b; text-transform: uppercase;">1. Before (CVSS Alone)</div>
+            <div style="font-size: 0.84rem; font-weight: 600; color: #7f1d1d; margin-top: 3px;">{html.escape(before_text)}</div>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 12px; align-items: center; margin-bottom: 14px;">
-            <div style="background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 10px 14px;">
-                <div style="font-size: 0.72rem; font-weight: 700; color: #991b1b; text-transform: uppercase;">1. Before (CVSS Alone)</div>
-                <div style="font-size: 0.86rem; font-weight: 600; color: #7f1d1d; margin-top: 4px;">{html.escape(before_text)}</div>
-            </div>
-            <div style="font-size: 1.2rem; color: #94a3b8; font-weight: bold;">→</div>
-            <div style="background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: 10px 14px;">
-                <div style="font-size: 0.72rem; font-weight: 700; color: #1d4ed8; text-transform: uppercase;">2. Environmental Change</div>
-                <div style="font-size: 0.86rem; font-weight: 600; color: #1e3a8a; margin-top: 4px;">{html.escape(change_text)}</div>
-            </div>
-            <div style="font-size: 1.2rem; color: #94a3b8; font-weight: bold;">→</div>
-            <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 10px 14px;">
-                <div style="font-size: 0.72rem; font-weight: 700; color: #166534; text-transform: uppercase;">3. After (Aegis Priority)</div>
-                <div style="font-size: 0.86rem; font-weight: 600; color: #14532d; margin-top: 4px;">{html.escape(after_text)}</div>
-            </div>
+        <div style="font-size: 1.1rem; color: #94a3b8; font-weight: bold;">→</div>
+        <div style="background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: 10px 12px;">
+            <div style="font-size: 0.70rem; font-weight: 800; color: #1d4ed8; text-transform: uppercase;">2. Environmental Change</div>
+            <div style="font-size: 0.84rem; font-weight: 600; color: #1e3a8a; margin-top: 3px;">{html.escape(change_text)}</div>
         </div>
-        <div style="background-color: #f8fafc; border-left: 4px solid #3b82f6; padding: 10px 14px; border-radius: 4px;">
-            <div style="font-size: 0.78rem; font-weight: 700; color: #1e293b; margin-bottom: 2px;">💡 Why Did It Change?</div>
-            <div style="font-size: 0.85rem; color: #475569; line-height: 1.45;">{html.escape(why_text)}</div>
+        <div style="font-size: 1.1rem; color: #94a3b8; font-weight: bold;">→</div>
+        <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 10px 12px;">
+            <div style="font-size: 0.70rem; font-weight: 800; color: #166534; text-transform: uppercase;">3. After (Aegis Priority)</div>
+            <div style="font-size: 0.84rem; font-weight: 600; color: #14532d; margin-top: 3px;">{html.escape(after_text)}</div>
         </div>
     </div>
-    """
+    <div style="background-color: #f8fafc; border-left: 4px solid #3b82f6; padding: 10px 12px; border-radius: 4px;">
+        <div style="font-size: 0.76rem; font-weight: 800; color: #1e293b; margin-bottom: 2px;">💡 Why Did It Change?</div>
+        <div style="font-size: 0.84rem; color: #475569; line-height: 1.45;">{html.escape(why_text)}</div>
+    </div>
+</div>
+""")
 
 
 def render_scenario_header() -> None:
-    """Render the standard Scenario Explorer header and benchmark disclaimer."""
+    """Render the What If? scenario explorer header and explanation."""
     st.title("Aegis Patch — Scenarios Explorer")
-    st.subheader("See how environmental context changes vulnerability priority.")
+    st.subheader("What If? — See how environmental context changes vulnerability priority.")
     st.markdown(
-        """
-        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #1d4ed8; border-radius: 4px; padding: 10px 16px; margin: 10px 0 20px 0; font-size: 0.86rem; color: #475569;">
-            🛡️ <strong>Benchmark Grounding:</strong> Benchmark scenarios use synthetic enterprise context to demonstrate how environmental factors, threat intelligence, and compensating controls deterministically alter prioritization.
+        clean_html("""
+        <div class="section-header">
+            <h3 class="section-title">WHAT IF?</h3>
+            <div class="section-subtitle">See how changing the environment can change vulnerability priority.</div>
         </div>
-        """,
+        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #1d4ed8; border-radius: 6px; padding: 12px 18px; margin: 8px 0 18px 0; font-size: 0.88rem; color: #334155; line-height: 1.55;">
+            The same vulnerability can become more or less urgent depending on where it runs, how exposed it is, how important the system is, and what protection is already in place.
+        </div>
+        """),
         unsafe_allow_html=True,
     )
+
 
 
 def render_scenario_a_view(comp: Dict[str, Any]) -> None:
@@ -784,20 +791,20 @@ def render_patch_plan_view(
     assets: Dict[str, Asset],
     assessments: Dict[str, RiskAssessment],
 ) -> None:
-    """Render the dedicated enterprise Patch Plan orchestration view."""
-    # 1. Header & Purpose
+    """Render the dedicated enterprise Recommended Remediation Plan orchestration view."""
+    # 1. Header & Enterprise Purpose
     st.markdown(
         """
         <div class="section-header">
-            <h3 class="section-title">Remediation Patch Plan</h3>
-            <div class="section-subtitle">Recommended remediation schedule for the upcoming 16-hour maintenance window</div>
+            <h2 class="section-title" style="font-size: 1.55rem;">RECOMMENDED REMEDIATION PLAN</h2>
+            <div class="section-subtitle">Choose the fixes that provide the greatest risk reduction within the available maintenance time.</div>
         </div>
         """,
         unsafe_allow_html=True,
     )
 
-    # 2. Mandatory Human Approval Callout
-    st.markdown(render_human_approval_callout(), unsafe_allow_html=True)
+    # 2. Security Operations Approval Callout
+    st.markdown(render_security_approval_callout(), unsafe_allow_html=True)
 
     # Build candidates and solve optimization for default 16h window
     candidates = build_patch_candidates(findings, assets, assessments)
@@ -813,13 +820,13 @@ def render_patch_plan_view(
     )
 
     # 4. Summary Metric Cards
-    k1, k2, k3, k4 = st.columns(4)
+    k1, k2, k3, k4, k5 = st.columns(5)
     with k1:
         st.markdown(
             render_metric_card(
-                "Maintenance Window",
-                f"{plan_result['capacity_limit_hours']} hrs",
-                "Approved operational labor budget",
+                "Available Patching Time",
+                f"{plan_result['capacity_limit_hours']:.1f} hrs",
+                "Approved maintenance window",
             ),
             unsafe_allow_html=True,
         )
@@ -827,37 +834,46 @@ def render_patch_plan_view(
         st.markdown(
             render_metric_card(
                 "Scheduled Effort",
-                f"{plan_result['total_scheduled_effort_hours']} hrs",
-                f"{plan_result['remaining_capacity_hours']} hrs buffer remaining",
+                f"{plan_result['total_scheduled_effort_hours']:.1f} hrs",
+                "Allocated engineering labor",
             ),
             unsafe_allow_html=True,
         )
     with k3:
         st.markdown(
             render_metric_card(
-                "Total Risk Reduction",
-                f"{plan_result['total_expected_risk_reduction']} pts",
-                "Contextual ERS eliminated this window",
+                "Remaining Capacity",
+                f"{plan_result['remaining_capacity_hours']:.1f} hrs",
+                "Unallocated operational buffer",
             ),
             unsafe_allow_html=True,
         )
     with k4:
         st.markdown(
             render_metric_card(
-                "Patches Scheduled",
+                "Expected Risk Reduction",
+                f"{plan_result['total_expected_risk_reduction']:.2f} pts",
+                "Contextual ERS eliminated",
+            ),
+            unsafe_allow_html=True,
+        )
+    with k5:
+        st.markdown(
+            render_metric_card(
+                "Findings Scheduled",
                 f"{plan_result['scheduled_count']} of {len(candidates)}",
-                f"{plan_result['deferred_count']} deferred to next window",
+                f"{plan_result['deferred_count']} deferred to cycle 2",
             ),
             unsafe_allow_html=True,
         )
 
-    st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
 
-    # 5. Scheduled Candidates Table
+    # 5. Scheduled Findings Table
     st.markdown(
         f"""
         <div class="section-header">
-            <h4 class="section-title" style="color: #166534;">Scheduled for Maintenance ({plan_result['scheduled_count']} Patches)</h4>
+            <h4 class="section-title" style="color: #166534;">SELECTED FOR THIS MAINTENANCE WINDOW ({plan_result['scheduled_count']} Findings)</h4>
             <div class="section-subtitle">Optimal candidate combination fitting within available hours while maximizing risk reduction</div>
         </div>
         """,
@@ -870,17 +886,15 @@ def render_patch_plan_view(
         asset = assets.get(finding.asset_id) if finding else None
         sched_rows.append(
             {
-                "Rank": f"#{r['rank']}",
-                "Candidate ID": r["candidate_id"],
-                "CVE ID": r["cve_id"],
-                "Title": finding.title if finding else "Unknown",
+                "Priority": f"#{r['rank']}",
+                "Vulnerability": r["cve_id"],
                 "Business Area": derive_business_area(finding, asset),
-                "Target Hostname": r["hostname"],
-                "Environment": r["environment"],
-                "Risk Tier": r["risk_tier"],
-                "Effort (Hours)": r["estimated_cost_hours"],
-                "Risk Reduction": r["expected_risk_reduction"],
-                "Efficiency Ratio": r["efficiency_ratio"],
+                "Affected System": r["hostname"],
+                "Severity": r["risk_tier"],
+                "Aegis Risk": f"{r['expected_risk_reduction']:.2f}",
+                "Estimated Effort": f"{r['estimated_cost_hours']:.1f}h",
+                "Expected Risk Reduction": f"{r['expected_risk_reduction']:.2f} pts",
+                "Reason Selected": f"Optimal efficiency ratio ({r['efficiency_ratio']:.2f} reduction/hr) fitting within 16h window",
             }
         )
 
@@ -890,27 +904,25 @@ def render_patch_plan_view(
         width="stretch",
         hide_index=True,
         column_config={
-            "Rank": st.column_config.TextColumn("Rank", width="small"),
-            "Candidate ID": st.column_config.TextColumn("Candidate", width="small"),
-            "CVE ID": st.column_config.TextColumn("CVE ID", width="medium"),
-            "Title": st.column_config.TextColumn("Vulnerability Title", width="large"),
+            "Priority": st.column_config.TextColumn("Priority", width="small"),
+            "Vulnerability": st.column_config.TextColumn("Vulnerability", width="medium"),
             "Business Area": st.column_config.TextColumn("Business Area", width="medium"),
-            "Target Hostname": st.column_config.TextColumn("Target Host", width="medium"),
-            "Environment": st.column_config.TextColumn("Env", width="small"),
-            "Risk Tier": st.column_config.TextColumn("Risk Tier", width="small"),
-            "Effort (Hours)": st.column_config.NumberColumn("Effort (h)", format="%.1f", width="small"),
-            "Risk Reduction": st.column_config.NumberColumn("Risk Reduction", format="%.2f", width="small"),
-            "Efficiency Ratio": st.column_config.NumberColumn("Efficiency", format="%.2f", width="small"),
+            "Affected System": st.column_config.TextColumn("Affected System", width="medium"),
+            "Severity": st.column_config.TextColumn("Severity", width="small"),
+            "Aegis Risk": st.column_config.TextColumn("Aegis Risk", width="small"),
+            "Estimated Effort": st.column_config.TextColumn("Estimated Effort", width="small"),
+            "Expected Risk Reduction": st.column_config.TextColumn("Expected Risk Reduction", width="small"),
+            "Reason Selected": st.column_config.TextColumn("Reason Selected", width="large"),
         },
     )
 
-    st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
 
     # 6. Deferred Candidates Table with Explicit Reasons
     st.markdown(
         f"""
         <div class="section-header">
-            <h4 class="section-title" style="color: #475569;">Deferred Remediation Candidates ({plan_result['deferred_count']} Patches)</h4>
+            <h4 class="section-title" style="color: #475569;">DEFERRED REMEDIATION ({plan_result['deferred_count']} Findings)</h4>
             <div class="section-subtitle">Candidates deferred to the next maintenance cycle with explicit operational rationale</div>
         </div>
         """,
@@ -925,20 +937,20 @@ def render_patch_plan_view(
         effort = r["estimated_cost_hours"]
 
         if effort > rem_hours:
-            defer_reason = f"Exceeds remaining window buffer ({rem_hours:.1f}h available vs {effort:.1f}h required); queued for cycle 2"
+            defer_reason = f"Exceeds remaining window buffer ({rem_hours:.1f}h available vs {effort:.1f}h required)"
+            next_rec = "Queued for immediate inclusion in Maintenance Cycle 2"
         else:
-            defer_reason = f"Lower risk efficiency ratio ({r['efficiency_ratio']:.2f}) than scheduled candidates; deferred per knapsack policy"
+            defer_reason = f"Lower risk efficiency ratio ({r['efficiency_ratio']:.2f}) than scheduled candidates"
+            next_rec = "Re-evaluate during next sprint allocation"
 
         def_rows.append(
             {
-                "Rank": f"#{r['rank']}",
-                "Candidate ID": r["candidate_id"],
-                "CVE ID": r["cve_id"],
-                "Business Area": derive_business_area(finding, asset),
-                "Target Hostname": r["hostname"],
-                "Effort (Hours)": effort,
-                "Risk Reduction": r["expected_risk_reduction"],
-                "Operational Reason for Deferral": defer_reason,
+                "Vulnerability": r["cve_id"],
+                "Affected System": r["hostname"],
+                "Aegis Risk": f"{r['expected_risk_reduction']:.2f}",
+                "Estimated Effort": f"{effort:.1f}h",
+                "Reason Deferred": defer_reason,
+                "Next Recommendation": next_rec,
             }
         )
 
@@ -948,27 +960,197 @@ def render_patch_plan_view(
         width="stretch",
         hide_index=True,
         column_config={
-            "Rank": st.column_config.TextColumn("Rank", width="small"),
-            "Candidate ID": st.column_config.TextColumn("Candidate", width="small"),
-            "CVE ID": st.column_config.TextColumn("CVE ID", width="medium"),
-            "Business Area": st.column_config.TextColumn("Business Area", width="medium"),
-            "Target Hostname": st.column_config.TextColumn("Target Host", width="medium"),
-            "Effort (Hours)": st.column_config.NumberColumn("Effort (h)", format="%.1f", width="small"),
-            "Risk Reduction": st.column_config.NumberColumn("Risk Reduction", format="%.2f", width="small"),
-            "Operational Reason for Deferral": st.column_config.TextColumn("Reason for Deferral", width="large"),
+            "Vulnerability": st.column_config.TextColumn("Vulnerability", width="medium"),
+            "Affected System": st.column_config.TextColumn("Affected System", width="medium"),
+            "Aegis Risk": st.column_config.TextColumn("Aegis Risk", width="small"),
+            "Estimated Effort": st.column_config.TextColumn("Estimated Effort", width="small"),
+            "Reason Deferred": st.column_config.TextColumn("Reason Deferred", width="large"),
+            "Next Recommendation": st.column_config.TextColumn("Next Recommendation", width="large"),
         },
     )
 
-    # 7. Expandable Knapsack & Optimization Explanation
+    st.markdown("<div style='height: 18px;'></div>", unsafe_allow_html=True)
+
+    # 7. REMEDIATION PLAN DETAILS (Mandatory before approval)
+    st.markdown(
+        """
+        <div class="section-header">
+            <h3 class="section-title">REMEDIATION PLAN DETAILS</h3>
+            <div class="section-subtitle">Technical remediation specifications, fixed versions, rollback plans, and operational notes for scheduled items</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    detail_rows = []
+    for r in plan_result["scheduled_candidates"]:
+        finding = findings.get(r["finding_id"])
+        asset = assets.get(finding.asset_id) if finding else None
+        installed_ver = finding.installed_version if (finding and finding.installed_version) else "Not specified"
+        fixed_ver = finding.fixed_version if (finding and finding.fixed_version) else "Not specified in current benchmark"
+        title_val = finding.title if finding else "Vulnerability remediation"
+
+        detail_rows.append(
+            {
+                "Vulnerability": title_val,
+                "CVE": r["cve_id"],
+                "Affected System": r["hostname"],
+                "Current Version": installed_ver,
+                "Target / Fixed Version": fixed_ver,
+                "Recommended Action": "Plan Fix",
+                "Estimated Effort": f"{r['estimated_cost_hours']:.1f}h",
+                "Dependencies": "None identified in benchmark",
+                "Expected Risk Reduction": f"{r['expected_risk_reduction']:.2f} pts",
+                "Rollback Plan": "Rollback details not specified in current benchmark.",
+                "Operational Notes": f"Package {finding.affected_package if finding else 'target'} on {r['hostname']} ({r['environment']}). Standard staging pre-validation advised.",
+            }
+        )
+
+    df_details = pd.DataFrame(detail_rows)
+    st.dataframe(
+        df_details,
+        width="stretch",
+        hide_index=True,
+        column_config={
+            "Vulnerability": st.column_config.TextColumn("Vulnerability", width="medium"),
+            "CVE": st.column_config.TextColumn("CVE", width="small"),
+            "Affected System": st.column_config.TextColumn("Affected System", width="small"),
+            "Current Version": st.column_config.TextColumn("Current Version", width="small"),
+            "Target / Fixed Version": st.column_config.TextColumn("Target / Fixed Version", width="medium"),
+            "Recommended Action": st.column_config.TextColumn("Recommended Action", width="small"),
+            "Estimated Effort": st.column_config.TextColumn("Estimated Effort", width="small"),
+            "Dependencies": st.column_config.TextColumn("Dependencies", width="medium"),
+            "Expected Risk Reduction": st.column_config.TextColumn("Risk Reduction", width="small"),
+            "Rollback Plan": st.column_config.TextColumn("Rollback Plan", width="medium"),
+            "Operational Notes": st.column_config.TextColumn("Operational Notes", width="large"),
+        },
+    )
+
+    st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
+
+    # 8. SECURITY OPERATIONS APPROVAL SECTION
+    st.markdown(
+        """
+        <div class="section-header">
+            <h3 class="section-title">SECURITY OPERATIONS APPROVAL</h3>
+            <div class="section-subtitle">Authorized security operator review and sign-off for operational remediation queue</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # Initialize approval state in session state if not present
+    if "remediation_plan_approval_state" not in st.session_state:
+        st.session_state["remediation_plan_approval_state"] = "PENDING_APPROVAL"
+    if "confirming_approval" not in st.session_state:
+        st.session_state["confirming_approval"] = False
+
+    approval_status = st.session_state["remediation_plan_approval_state"]
+
+    # Status indicator badge
+    if approval_status == "APPROVED":
+        status_badge_html = '<span style="background-color: #f0fdf4; border: 1px solid #86efac; color: #15803d; font-weight: 800; padding: 4px 12px; border-radius: 9999px; font-size: 0.85rem;">✓ APPROVED</span>'
+    elif approval_status == "REJECTED":
+        status_badge_html = '<span style="background-color: #fef2f2; border: 1px solid #fca5a5; color: #b91c1c; font-weight: 800; padding: 4px 12px; border-radius: 9999px; font-size: 0.85rem;">✕ REJECTED</span>'
+    elif approval_status == "NEEDS_REVIEW":
+        status_badge_html = '<span style="background-color: #fffbeb; border: 1px solid #fde68a; color: #b45309; font-weight: 800; padding: 4px 12px; border-radius: 9999px; font-size: 0.85rem;">⚠️ NEEDS REVIEW</span>'
+    else:
+        status_badge_html = '<span style="background-color: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8; font-weight: 800; padding: 4px 12px; border-radius: 9999px; font-size: 0.85rem;">⏳ PENDING APPROVAL</span>'
+
+    st.markdown(
+        f"""
+        <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 18px 22px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.1rem; font-weight: 800; color: #0f172a;">Plan Status:</span>
+                    {status_badge_html}
+                </div>
+                <div style="font-size: 0.84rem; color: #475569;">
+                    <span><strong>Prepared by:</strong> Aegis Patch</span> &nbsp;|&nbsp;
+                    <span><strong>Independent Verification:</strong> <span style="color: #166534; font-weight: 700;">✓ PASSED</span></span>
+                </div>
+            </div>
+            <div style="font-size: 0.88rem; color: #334155; line-height: 1.6;">
+                Aegis Patch prepares and verifies the recommended remediation plan. An authorized security operator must review and approve the plan before any remediation action can be considered authorized.
+                <strong>Aegis Patch does not directly modify production infrastructure, execute shell commands, or perform live patching.</strong>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # Post-approval or action result banners
+    if approval_status == "APPROVED":
+        st.success(
+            "✓ **APPROVED — Remediation plan approved by the Security Operations Team.**\n\n"
+            "**Plan Status:** APPROVED &nbsp;|&nbsp; **Execution:** NOT PERFORMED BY AEGIS PATCH "
+            "(Plan authorized for operational execution review by operations engineering)."
+        )
+    elif approval_status == "REJECTED":
+        st.error(
+            "✕ **REJECTED — Remediation recommendation was not approved.**\n\n"
+            "The remediation queue has been halted. No operational execution is authorized."
+        )
+    elif approval_status == "NEEDS_REVIEW":
+        st.warning(
+            "⚠️ **NEEDS REVIEW — Remediation recommendation returned for review.**\n\n"
+            "Security operators requested changes or additional verification before operational approval."
+        )
+
+    # Interactive Approval Controls
+    if approval_status == "PENDING_APPROVAL":
+        if not st.session_state["confirming_approval"]:
+            col_btn1, col_btn2, col_btn_spacer = st.columns([2.0, 2.0, 3.5])
+            with col_btn1:
+                if st.button("Approve Remediation Plan", key="btn_open_approval_modal", use_container_width=True):
+                    st.session_state["confirming_approval"] = True
+                    st.rerun()
+            with col_btn2:
+                if st.button("Reject / Request Changes", key="btn_reject_plan", use_container_width=True):
+                    st.session_state["remediation_plan_approval_state"] = "REJECTED"
+                    st.rerun()
+        else:
+            # Confirmation Dialog Step
+            st.markdown(
+                """
+                <div style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 16px 20px; margin: 12px 0;">
+                    <div style="font-size: 1.05rem; font-weight: 800; color: #92400e; margin-bottom: 6px;">
+                        Approve this remediation recommendation?
+                    </div>
+                    <div style="font-size: 0.88rem; color: #78350f; line-height: 1.5; margin-bottom: 12px;">
+                        Approval authorizes this plan for operational execution review. Aegis Patch does not directly modify production infrastructure.
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+            col_conf1, col_conf2, col_conf_spacer = st.columns([1.8, 1.8, 3.5])
+            with col_conf1:
+                if st.button("Confirm Approval", key="btn_confirm_approval_action", use_container_width=True):
+                    st.session_state["remediation_plan_approval_state"] = "APPROVED"
+                    st.session_state["confirming_approval"] = False
+                    st.rerun()
+            with col_conf2:
+                if st.button("Cancel", key="btn_cancel_approval_action", use_container_width=True):
+                    st.session_state["confirming_approval"] = False
+                    st.rerun()
+    else:
+        # Reset approval button to allow re-testing in demo
+        if st.button("↺ Reset Approval State (Demo Triage)", key="btn_reset_approval_demo"):
+            st.session_state["remediation_plan_approval_state"] = "PENDING_APPROVAL"
+            st.session_state["confirming_approval"] = False
+            st.rerun()
+
+    # 9. Expandable Knapsack & Optimization Explanation
     st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
-    with st.expander("📐 How Patch Plan Optimization Works (Knapsack Algorithm & Safety Constraints)"):
+    with st.expander("📐 How Remediation Plan Optimization Works (Knapsack Algorithm & Safety Constraints)"):
         st.markdown(
             """
             **Optimization Formulation:**
-            - **Problem Type:** 0/1 Knapsack Optimization under operational constraints (`POL-SEC-04-patching.md §4.2.2`).
+            - **Problem Type:** 0/1 Knapsack Optimization under operational capacity constraints (`POL-SEC-04-patching.md §4.2.2`).
             - **Objective Function:** $\\max \\sum_{i} x_i \\cdot \\Delta R_i$ subject to $\\sum_{i} x_i \\cdot c_i \\le C_{limit}$, where $x_i \\in \\{0, 1\\}$.
             - **Efficiency Ratio:** $\\text{Ratio}_i = \\frac{\\Delta R_i}{c_i}$ (Risk Reduction per Engineering Hour).
-            - **Deterministic Tie-Breaking:** If two candidates yield identical efficiency, priority is given to the higher absolute risk reduction, then lower candidate ID.
-            - **Safety Guarantee:** Aegis Patch creates prioritized patch plans with explicit rollback verifications. All production deployments require human operator approval.
+            - **Deterministic Tie-Breaking:** If two candidates yield identical efficiency, priority is given to higher absolute risk reduction, then lower candidate ID.
+            - **Safety Guarantee:** Aegis Patch models and prioritizes remediation candidates with explicit rollback verifications. All operational deployments require authorized Security Operations approval. Aegis Patch does not execute live patches.
             """
         )

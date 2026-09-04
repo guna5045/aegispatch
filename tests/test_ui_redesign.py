@@ -257,3 +257,77 @@ def test_streamlit_vulnerabilities_investigation_agent_story():
     # Check back button exists
     back_btn = next((b for b in at.button if b.key == "btn_back_to_findings_view"), None)
     assert back_btn is not None
+
+
+def test_no_raw_html_code_blocks_rendered():
+    """Verify that zero raw HTML fragments or indented code blocks are displayed as text."""
+    app_path = str(Path(__file__).resolve().parent.parent / "app.py")
+    at = AppTest.from_file(app_path, default_timeout=30).run()
+    assert not at.exception
+
+    # Scan markdown elements on Overview page
+    for md in at.markdown:
+        # None of them should contain raw code-fenced HTML or pipeline-step tags
+        assert "```<div" not in md.value
+        assert "<div class=\"pipeline-step\">" not in md.value or "```" not in md.value
+
+
+def test_remediation_plan_approval_and_rejection_workflow():
+    """Verify the interactive security operations approval workflow without live infrastructure changes."""
+    app_path = str(Path(__file__).resolve().parent.parent / "app.py")
+    at = AppTest.from_file(app_path, default_timeout=30).run()
+    assert not at.exception
+
+    # Navigate to Patch Plan
+    nav_radio = next(r for r in at.radio if r.key == "top_nav_selector")
+    nav_radio.set_value("Patch Plan").run()
+    assert not at.exception
+
+    # Initially status should be PENDING APPROVAL
+    # Click Approve Remediation Plan
+    btn_approve = next(b for b in at.button if b.key == "btn_open_approval_modal")
+    btn_approve.click().run()
+    assert not at.exception
+
+    # Confirmation section appears with safety notice
+    btn_confirm = next(b for b in at.button if b.key == "btn_confirm_approval_action")
+    btn_confirm.click().run()
+    assert not at.exception
+
+    # Verify approved state is recorded
+    assert at.session_state["remediation_plan_approval_state"] == "APPROVED"
+
+    # Reset state for rejection test
+    btn_reset = next(b for b in at.button if b.key == "btn_reset_approval_demo")
+    btn_reset.click().run()
+    assert not at.exception
+    assert at.session_state["remediation_plan_approval_state"] == "PENDING_APPROVAL"
+
+    # Test rejection
+    btn_reject = next(b for b in at.button if b.key == "btn_reject_plan")
+    btn_reject.click().run()
+    assert not at.exception
+    assert at.session_state["remediation_plan_approval_state"] == "REJECTED"
+
+
+def test_how_aegis_works_specialist_agents_and_architecture():
+    """Verify How Aegis Works page exhibits 6 specialist agents and technical architecture."""
+    app_path = str(Path(__file__).resolve().parent.parent / "app.py")
+    at = AppTest.from_file(app_path, default_timeout=30).run()
+    assert not at.exception
+
+    # Navigate to How Aegis Works
+    nav_radio = next(r for r in at.radio if r.key == "top_nav_selector")
+    nav_radio.set_value("How Aegis Works").run()
+    assert not at.exception
+
+    # Check that specialist agent mentions exist
+    md_texts = " ".join(md.value for md in at.markdown)
+    assert "Scan Intake" in md_texts
+    assert "Threat & Exploit Check" in md_texts
+    assert "Business & Asset Context" in md_texts
+    assert "Risk Decision" in md_texts
+    assert "Patch Planning" in md_texts
+    assert "Verification" in md_texts
+    assert "WHY SPECIALIST AGENTS?" in md_texts
+    assert "Tool Registry" in md_texts

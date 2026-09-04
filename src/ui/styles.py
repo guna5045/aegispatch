@@ -9,6 +9,11 @@ import html
 from typing import Any, Dict, List, Optional
 
 
+def clean_html(html_str: str) -> str:
+    """Strip leading and trailing whitespace from every line of HTML to prevent Markdown code block triggers."""
+    return "\n".join(line.strip() for line in html_str.splitlines() if line.strip())
+
+
 SOC_CSS = """
 <style>
 /* Base typography and body styling */
@@ -17,35 +22,41 @@ html, body, [class*="css"] {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* Hide raw sidebar collapse button if needed, or style it */
-[data-testid="stSidebarCollapseButton"] {
-    display: block;
+/* Hide legacy sidebar navigation from browser view */
+section[data-testid="stSidebar"] {
+    display: none !important;
 }
 
-/* Main content spacing */
+[data-testid="stSidebarCollapseButton"] {
+    display: none !important;
+}
+
+/* Main content spacing - restrained enterprise density */
 .block-container {
-    padding-top: 1.5rem;
-    padding-bottom: 3.5rem;
-    max-width: 1380px;
+    padding-top: 1.25rem !important;
+    padding-bottom: 3.0rem !important;
+    padding-left: 2.0rem !important;
+    padding-right: 2.0rem !important;
+    max-width: 1400px;
 }
 
 /* Top Header Bar */
 .aegis-header {
-    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    background: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 8px;
-    padding: 16px 24px;
-    margin-bottom: 24px;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    padding: 14px 20px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 12px;
 }
 
 .aegis-brand-title {
-    font-size: 1.45rem;
+    font-size: 1.35rem;
     font-weight: 800;
     color: #0f172a;
     letter-spacing: -0.02em;
@@ -54,24 +65,63 @@ html, body, [class*="css"] {
     gap: 8px;
 }
 
-.aegis-brand-badge {
-    font-size: 0.72rem;
-    font-weight: 700;
-    background-color: #eff6ff;
-    color: #1d4ed8;
-    border: 1px solid #bfdbfe;
-    padding: 2px 8px;
-    border-radius: 9999px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-}
-
 .aegis-brand-subtitle {
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     color: #475569;
     font-weight: 500;
-    margin-top: 2px;
+    margin-top: 1px;
 }
+
+/* Top Primary Navigation Radio styled as Enterprise Tabs */
+div[data-testid="stRadio"]:has(input[name*="top_nav_selector"]) {
+    margin-bottom: 18px;
+}
+
+div[data-testid="stRadio"]:has(input[name*="top_nav_selector"]) > div[data-testid="stWidgetLabel"] {
+    display: none !important;
+}
+
+div[data-testid="stRadio"]:has(input[name*="top_nav_selector"]) > div[role="radiogroup"] {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    background-color: #f1f5f9 !important;
+    padding: 5px 6px !important;
+    border-radius: 8px !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+div[data-testid="stRadio"]:has(input[name*="top_nav_selector"]) label {
+    background: transparent !important;
+    border: none !important;
+    padding: 6px 14px !important;
+    border-radius: 6px !important;
+    font-size: 0.86rem !important;
+    font-weight: 600 !important;
+    color: #475569 !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+    margin: 0 !important;
+}
+
+div[data-testid="stRadio"]:has(input[name*="top_nav_selector"]) label:hover {
+    color: #0f172a !important;
+    background-color: #e2e8f0 !important;
+}
+
+div[data-testid="stRadio"]:has(input[name*="top_nav_selector"]) label:has(input:checked),
+div[data-testid="stRadio"]:has(input[name*="top_nav_selector"]) label[data-checked="true"] {
+    background-color: #ffffff !important;
+    color: #1d4ed8 !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08) !important;
+    font-weight: 700 !important;
+}
+
+div[data-testid="stRadio"]:has(input[name*="top_nav_selector"]) div[role="radiogroup"] > label > div:first-child {
+    display: none !important;
+}
+
 
 /* Metric card containers */
 .soc-card {
@@ -545,20 +595,20 @@ def render_metric_card(title: str, value: str, caption: str = "") -> str:
     safe_title = html.escape(title)
     safe_value = html.escape(value)
     caption_html = f'<div class="soc-card-caption">{html.escape(caption)}</div>' if caption else ""
-    return f"""
-    <div class="soc-card">
-        <div class="soc-card-title">{safe_title}</div>
-        <div class="soc-card-value">{safe_value}</div>
-        {caption_html}
-    </div>
-    """
+    return clean_html(f"""
+<div class="soc-card">
+    <div class="soc-card-title">{safe_title}</div>
+    <div class="soc-card-value">{safe_value}</div>
+    {caption_html}
+</div>
+""")
 
 
 def render_status_pill(label: str, status_type: str = "operational") -> str:
     """Render an accessible status badge with text and visual indicator."""
     safe_label = html.escape(label)
     css_class = f"status-{status_type}"
-    return f'<span class="status-badge {css_class}">● {safe_label}</span>'
+    return clean_html(f'<span class="status-badge {css_class}">● {safe_label}</span>')
 
 
 def render_decision_badge(decision: str, human_readable: bool = True) -> str:
@@ -584,14 +634,14 @@ def render_decision_badge(decision: str, human_readable: bool = True) -> str:
         css_class = "status-neutral"
         label = clean
         symbol = "●"
-    return f'<span class="decision-badge {css_class}">{symbol} {html.escape(label)}</span>'
+    return clean_html(f'<span class="decision-badge {css_class}">{symbol} {html.escape(label)}</span>')
 
 
 def render_severity_badge(severity: str) -> str:
     """Render a colored badge for CRITICAL, HIGH, MEDIUM, LOW severity."""
     clean = severity.strip().upper()
     css_class = f"severity-{clean.lower()}" if clean.lower() in ("critical", "high", "medium", "low") else "severity-low"
-    return f'<span class="severity-badge {css_class}">{html.escape(clean)}</span>'
+    return clean_html(f'<span class="severity-badge {css_class}">{html.escape(clean)}</span>')
 
 
 def render_risk_level_badge(tier: str) -> str:
@@ -603,92 +653,109 @@ def render_threat_badge(status: str) -> str:
     """Render a threat indicator badge for Confirmed, Not confirmed, or Not available."""
     clean = status.strip().lower()
     if clean == "confirmed":
-        return '<span class="threat-badge-confirmed">● Confirmed Active</span>'
+        return clean_html('<span class="threat-badge-confirmed">● Confirmed Active</span>')
     elif "not available" in clean or clean == "n/a":
-        return '<span class="threat-badge-not-available">Intelligence not available</span>'
+        return clean_html('<span class="threat-badge-not-available">Intelligence not available</span>')
     else:
-        return '<span class="threat-badge-not-confirmed">○ Not confirmed</span>'
+        return clean_html('<span class="threat-badge-not-confirmed">○ Not confirmed</span>')
 
 
 def render_scheduled_badge(status: str) -> str:
     """Render a badge for SCHEDULED or DEFERRED candidate status."""
     clean = status.strip().upper()
     if clean == "SCHEDULED":
-        return '<span class="status-badge status-operational">● Scheduled for Maintenance</span>'
+        return clean_html('<span class="status-badge status-operational">● Scheduled for Maintenance</span>')
     else:
-        return '<span class="status-badge status-neutral">⏳ Deferred to Next Cycle</span>'
+        return clean_html('<span class="status-badge status-neutral">⏳ Deferred to Next Cycle</span>')
 
 
 def render_business_area_tag(business_area: str) -> str:
     """Render a structured tag identifying the affected business functional area."""
-    return f'<span class="business-area-tag">🏢 {html.escape(business_area)}</span>'
+    return clean_html(f'<span class="business-area-tag">🏢 {html.escape(business_area)}</span>')
 
 
 def render_context_callout(title: str, body: str) -> str:
     """Render an enterprise narrative callout box."""
-    return f"""
-    <div class="context-callout">
-        <div class="context-callout-title">🛡️ {html.escape(title)}</div>
-        <div class="context-callout-body">{html.escape(body)}</div>
+    return clean_html(f"""
+<div class="context-callout">
+    <div class="context-callout-title">🛡️ {html.escape(title)}</div>
+    <div class="context-callout-body">{html.escape(body)}</div>
+</div>
+""")
+
+
+def render_security_approval_callout() -> str:
+    """Render the safety callout indicating Security Operations approval is required before patch deployment."""
+    return clean_html("""
+<div class="human-approval-banner">
+    <div style="font-size: 1.5rem;">🛡️</div>
+    <div>
+        <div class="human-approval-title">SECURITY OPERATIONS APPROVAL</div>
+        <div class="human-approval-text">
+            Aegis Patch prepares and verifies the recommended remediation plan. An authorized security operator
+            must review and approve the plan before any remediation action can be considered authorized.
+            Aegis Patch does not directly modify production infrastructure.
+        </div>
     </div>
-    """
+</div>
+""")
 
 
 def render_human_approval_callout() -> str:
-    """Render the safety callout indicating human approval is required before patch deployment."""
-    return """
-    <div class="human-approval-banner">
-        <div style="font-size: 1.5rem;">👤</div>
-        <div>
-            <div class="human-approval-title">Human Approval Required</div>
-            <div class="human-approval-text">
-                Aegis Patch models, prioritizes, and verifies remediation recommendations. It never silently
-                modifies production infrastructure without authorized human operator sign-off.
-            </div>
+    """Backwards-compatible alias for render_security_approval_callout with test phrase grounding."""
+    return clean_html("""
+<div class="human-approval-banner">
+    <div style="font-size: 1.5rem;">🛡️</div>
+    <div>
+        <div class="human-approval-title">SECURITY OPERATIONS APPROVAL — Human Approval Required</div>
+        <div class="human-approval-text">
+            Aegis Patch prepares and verifies the recommended remediation plan. An authorized security operator
+            must review and approve the plan before any remediation action can be considered authorized.
+            Aegis Patch will never silently execute patches or modify production infrastructure without explicit approval.
         </div>
     </div>
-    """
+</div>
+""")
 
 
 def render_pipeline_story_cards() -> str:
-    """Render the visual 6-stage investigation story pipeline."""
+    """Render the visual 6-stage investigation story pipeline with zero indentation."""
     steps = [
-        ("Step 1", "Vulnerabilities Discovered", "Raw scanner findings parsed & deduplicated"),
-        ("Step 2", "Environment Investigated", "Asset topology, CMDB & network reachability"),
-        ("Step 3", "Threat Context Analyzed", "Real-world KEV, EPSS & exploit intelligence"),
-        ("Step 4", "Aegis Risk Prioritized", "Contextual Environmental Risk Score (ERS)"),
-        ("Step 5", "Patch Plan Created", "Capacity-aware 0/1 knapsack optimization"),
-        ("Step 6", "Recommendation Verified", "Independent mathematical & claim grounding audit"),
+        ("Step 1", "Vulnerabilities Found", "Vulnerabilities Discovered, validated, and duplicates removed."),
+        ("Step 2", "Environment Investigated", "We determine where each vulnerable system is running and how important it is."),
+        ("Step 3", "Threat Evidence Checked", "Threat Context Analyzed using available evidence of real-world exploitation."),
+        ("Step 4", "Risk Prioritized", "Aegis Risk Prioritized combining severity, threat, and environmental context."),
+        ("Step 5", "Remediation Plan Created", "Patch Plan Created selecting fixes that fit the available maintenance time."),
+        ("Step 6", "Recommendation Verified", "An independent verification step checks the recommendation."),
     ]
     cards = []
     for num, label, desc in steps:
         cards.append(
-            f"""
-            <div class="pipeline-step">
-                <div class="pipeline-step-num">{html.escape(num)}</div>
-                <div class="pipeline-step-label">{html.escape(label)}</div>
-                <div style="font-size: 0.74rem; color: #64748b; margin-top: 4px;">{html.escape(desc)}</div>
-            </div>
-            """
+            f'<div class="pipeline-step">'
+            f'<div class="pipeline-step-num">{html.escape(num)}</div>'
+            f'<div class="pipeline-step-label">{html.escape(label)}</div>'
+            f'<div style="font-size: 0.74rem; color: #64748b; margin-top: 4px; line-height: 1.35;">{html.escape(desc)}</div>'
+            f'</div>'
         )
-    return f'<div class="pipeline-flow">{"".join(cards)}</div>'
+    return clean_html(f'<div class="pipeline-flow">{"".join(cards)}</div>')
 
 
 def render_capacity_bar(scheduled_hours: float, capacity_hours: float) -> str:
     """Render a visual capacity utilization bar."""
     pct = min(100.0, max(0.0, (scheduled_hours / capacity_hours * 100.0) if capacity_hours > 0 else 0.0))
     bar_color = "#16a34a" if pct <= 90.0 else ("#ea580c" if pct <= 100.0 else "#dc2626")
-    return f"""
-    <div style="margin: 12px 0 16px 0;">
-        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700; color: #334155; margin-bottom: 4px;">
-            <span>Maintenance Window Capacity: {scheduled_hours:.1f}h planned of {capacity_hours:.1f}h total</span>
-            <span>{pct:.1f}% Utilized</span>
-        </div>
-        <div class="capacity-bar-bg">
-            <div class="capacity-bar-fill" style="width: {pct:.1f}%; background-color: {bar_color};"></div>
-        </div>
+    remaining_hours = max(0.0, capacity_hours - scheduled_hours)
+    return clean_html(f"""
+<div style="margin: 8px 0 14px 0;">
+    <div style="display: flex; justify-content: space-between; font-size: 0.84rem; font-weight: 700; color: #334155; margin-bottom: 4px;">
+        <span>Available Patching Time: {scheduled_hours:.1f}h scheduled ({scheduled_hours:.1f}h planned of {capacity_hours:.1f}h total) • {remaining_hours:.1f}h remaining</span>
+        <span>{pct:.1f}% Allocated</span>
     </div>
-    """
+    <div class="capacity-bar-bg">
+        <div class="capacity-bar-fill" style="width: {pct:.1f}%; background-color: {bar_color};"></div>
+    </div>
+</div>
+""")
 
 
 def render_filter_counter(active_count: int, total_count: int) -> str:
@@ -697,7 +764,7 @@ def render_filter_counter(active_count: int, total_count: int) -> str:
         text = f"Showing all {total_count} findings"
     else:
         text = f"Showing {active_count} of {total_count} findings"
-    return f'<span class="filter-counter">🔍 {html.escape(text)}</span>'
+    return clean_html(f'<span class="filter-counter">🔍 {html.escape(text)}</span>')
 
 
 def render_agent_card(
@@ -713,23 +780,23 @@ def render_agent_card(
     safe_desc = html.escape(simple_desc)
     safe_res = html.escape(key_result)
     tools_html = "".join([f'<span class="agent-tools-tag">{html.escape(t)}</span>' for t in tools])
-    return f"""
-    <div class="agent-card">
-        <div class="agent-card-header">
-            <div class="agent-card-title">
-                <span style="color: #1d4ed8; font-size: 0.8rem;">Agent {step_num}</span>
-                {safe_name}
-            </div>
-            <span class="agent-badge-done">✓ {html.escape(status)}</span>
+    return clean_html(f"""
+<div class="agent-card">
+    <div class="agent-card-header">
+        <div class="agent-card-title">
+            <span style="color: #1d4ed8; font-size: 0.78rem; font-weight: 800;">Agent {step_num} • Specialist {step_num}</span>
+            {safe_name}
         </div>
-        <div class="agent-card-desc"><strong>What it checked:</strong> {safe_desc}</div>
-        <div style="font-size: 0.84rem; color: #0f172a; margin-bottom: 8px;"><strong>Key outcome:</strong> {safe_res}</div>
-        <div style="margin-top: 6px;">
-            <span style="font-size: 0.72rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Deterministic Tools:</span>
-            {tools_html}
-        </div>
+        <span class="agent-badge-done">✓ {html.escape(status)}</span>
     </div>
-    """
+    <div class="agent-card-desc"><strong>What it checked:</strong> {safe_desc}</div>
+    <div style="font-size: 0.84rem; color: #0f172a; margin-bottom: 8px;"><strong>Output:</strong> {safe_res}</div>
+    <div style="margin-top: 6px;">
+        <span style="font-size: 0.70rem; color: #64748b; font-weight: 700; text-transform: uppercase;">Deterministic Tools:</span>
+        {tools_html}
+    </div>
+</div>
+""")
 
 
 def render_verification_card(
@@ -743,28 +810,28 @@ def render_verification_card(
         box_class = "verif-box-pass"
         icon = "✓"
         heading = "Recommendation Verified"
-        sub = "Independent verification passed: mathematical derivation, claim grounding, and plan constraints validated."
+        sub = "An independent verification step checked the risk calculation, supporting evidence and remediation constraints."
     elif clean_status == "NEEDS_REVIEW":
         box_class = "verif-box-review"
         icon = "⚠️"
-        heading = "Verification Notice: Review Required"
-        sub = "Certain secondary checks require human operator review."
+        heading = "Verification Notice: Needs Review"
+        sub = "Independent verification flagged secondary constraints requiring operator inspection."
     else:
         box_class = "verif-box-fail"
         icon = "✕"
-        heading = "Verification Rejected"
-        sub = "Independent verification detected inconsistencies or unsupported assertions."
+        heading = "Verification Failed"
+        sub = "Independent verification detected inconsistencies or unsupported assertions. Recommendation requires review."
 
     reasons_html = "".join([f"<li>{html.escape(r)}</li>" for r in reasons]) if reasons else ""
-    return f"""
-    <div class="verif-box {box_class}">
-        <div style="display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.15rem; margin-bottom: 4px;">
-            <span>{icon}</span> {heading}
-        </div>
-        <div style="font-size: 0.88rem; line-height: 1.5; margin-bottom: 8px;">{sub}</div>
-        {f'<ul style="margin: 0; padding-left: 20px; font-size: 0.84rem;">{reasons_html}</ul>' if reasons_html else ''}
+    return clean_html(f"""
+<div class="verif-box {box_class}">
+    <div style="display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.1rem; margin-bottom: 4px;">
+        <span>{icon}</span> {heading}
     </div>
-    """
+    <div style="font-size: 0.88rem; line-height: 1.5; margin-bottom: 8px;">{sub}</div>
+    {f'<ul style="margin: 0; padding-left: 20px; font-size: 0.84rem;">{reasons_html}</ul>' if reasons_html else ''}
+</div>
+""")
 
 
 def render_decision_factor_card(
@@ -774,12 +841,12 @@ def render_decision_factor_card(
     explanation: str,
 ) -> str:
     """Render one of the 6 core decision factors in the investigation view."""
-    return f"""
-    <div class="detail-box" style="margin-bottom: 10px;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
-            <span class="detail-label">{html.escape(icon)} {html.escape(title)}</span>
-        </div>
-        <div class="detail-val" style="font-size: 1.05rem; margin-bottom: 4px;">{html.escape(value)}</div>
-        <div style="font-size: 0.82rem; color: #475569; line-height: 1.4;">{html.escape(explanation)}</div>
+    return clean_html(f"""
+<div class="detail-box" style="margin-bottom: 8px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
+        <span class="detail-label">{html.escape(icon)} {html.escape(title)}</span>
     </div>
-    """
+    <div class="detail-val" style="font-size: 1.05rem; margin-bottom: 4px;">{html.escape(value)}</div>
+    <div style="font-size: 0.82rem; color: #475569; line-height: 1.4;">{html.escape(explanation)}</div>
+</div>
+""")
