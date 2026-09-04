@@ -131,6 +131,45 @@ Aegis Patch provides a modern, RESTful FastAPI backend (`src/api/`) offering thi
 
 ---
 
+## Deterministic Security Tools & Tool Registry (Phase 7)
+
+Aegis Patch features 17 deterministic, strongly typed security tools (`src/tools/`) registered in `default_tool_registry`:
+- **Scan Tools**: `parse_raw_scan`, `validate_finding_schema`, `deduplicate_findings`.
+- **Asset CMDB Tools**: `query_asset_cmdb`, `verify_asset_exposure`, `list_active_controls`.
+- **Threat Intelligence Tools**: `lookup_cisa_kev`, `query_epss`, `query_osv_database`.
+- **Contextual Risk Tools**: `calculate_environmental_risk`, `explain_risk_score`.
+- **Remediation Planning Tools**: `optimize_patch_capacity` (0/1 knapsack DP), `resolve_package_dependencies`, `simulate_risk_reduction`.
+- **Verification & Governance Tools**: `verify_score_derivation`, `detect_hallucinated_claims`, `validate_plan_constraints`.
+
+All tools adhere to strict execution schemas (`BaseModel` inputs and `BaseToolResult` outputs) with zero external live network requirements, complete provenance metadata, and explicit side-effect classifications.
+
+---
+
+## Supervisor Agent Architecture (Phase 8)
+
+Phase 8 introduces the **Supervisor Agent** (`src/agents/`), an autonomous orchestrator driving bounded decision loops through structured planning, tool execution, and verification gates:
+
+- **Primary Orchestration Facade**: `SupervisorAgent` (`src/agents/supervisor.py`) coordinates lifecycle execution with guaranteed state isolation (0 shared mutable global state across runs).
+- **Bounded Runtime**: `SupervisorRuntime` (`src/agents/runtime.py`) manages the state-driven loop (`STATE -> PLAN -> ACTION -> EXECUTE -> OBSERVE -> UPDATE -> VERIFY -> FINALIZE`) bounded by configurable `max_iterations`.
+- **Planner Abstraction (`AgentPlanner`)**: Abstract strategy interface decoupling *what* to decide from *how* decisions are generated (`src/agents/planner.py`).
+  - **Deterministic Planner (`DeterministicSupervisorPlanner`)**: Fully offline, state-driven implementation driving all four workflows deterministically.
+  - **Future LLM Planner Boundary (`LLMSupervisorPlanner`)**: Conceptual placeholder contract that fails explicitly with `LLM_PLANNER_NOT_CONFIGURED` when unconfigured. No live model dependencies or API calls are used.
+  - **Sanitized LLM Context (`SupervisorLLMContext`)**: Sanitized state projection that statically excludes database sessions, tool callables, host paths, and API keys.
+  - **Action Output Validation (`validate_llm_action`)**: Enforces Pydantic schema validation, tool registry boundaries, and parameter injection blocks (`eval`, `cmd`, `raw_sql`).
+  - **Composite Fallback (`FallbackSupervisorPlanner`)**: Enables optional fallback from primary planner to deterministic planning with full audit tracking.
+- **Four Canonical Workflows**:
+  1. **`INVESTIGATE_FINDING`**: Autonomous multi-step analysis (schema validation -> CMDB lookup -> threat intelligence intake -> environmental risk calculation -> independent score derivation verification -> decision synthesis).
+  2. **`PRIORITIZE_FINDINGS`**: Multi-finding triage with scan deduplication, entity contextualization, threat evaluation, score verification, and deterministic ranking by $(-\text{ERS}, -\text{CVSS}, \text{finding\_id ASC})$.
+  3. **`PLAN_REMEDIATION`**: Capacity-constrained remediation scheduling using 0/1 knapsack dynamic programming under maintenance window hours, validated against capacity, candidate uniqueness, and rollback plan constraints.
+  4. **`WHAT_IF`**: Safe, non-destructive simulation (`simulate_risk_reduction`) projecting the impact of hypothetical compensating controls without mutating baseline state (`is_simulation = True`).
+- **Hardened Verification Gates**:
+  - Independent score derivation verification mandatory before finalization in `INVESTIGATE_FINDING` and `PRIORITIZE_FINDINGS`.
+  - Operational constraint validation mandatory before finalization in `PLAN_REMEDIATION`.
+  - Simulation output evidence mandatory before finalization in `WHAT_IF`.
+- **Strict Tool Registry Boundary**: All tool calls execute strictly through `default_tool_registry.invoke`, prohibiting arbitrary execution, raw shell commands, or unvetted functions.
+
+---
+
 ## Safety & Non-Destructive Operation
 
 Aegis Patch is explicitly designed as an advisory and planning platform:
