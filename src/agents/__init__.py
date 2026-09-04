@@ -43,9 +43,119 @@ from src.agents.schemas import (
     WhatIfContext,
     WorkflowContext,
 )
+from src.agents.asset_criticality import (
+    AssetCriticalityAgent,
+    AssetCriticalityInput,
+    AssetCriticalityResult,
+    AssetCriticalityStatus,
+    AssetSourceAvailability,
+)
+from src.agents.risk_combination import (
+    RiskCombinationAgent,
+    RiskCombinationInput,
+    RiskCombinationResult,
+    RiskCombinationStatus,
+    RiskEvidenceConsistency,
+    RiskEvidenceProvenance,
+)
+from src.agents.patch_plan import (
+    DeferralReason,
+    DeferredFindingDetail,
+    PatchPlanAgent,
+    PatchPlanAgentStatus,
+    PatchPlanInput,
+    PatchPlanProvenance,
+    PatchPlanResult,
+    ScheduledFindingDetail,
+)
+from src.agents.exploitability import (
+    AssessmentConfidence,
+    EvidenceStatus,
+    ExploitabilityAgent,
+    ExploitabilityAgentStatus,
+    ExploitabilityInput,
+    ExploitabilityMaturity,
+    ExploitabilityResult,
+    EpssEvidence,
+    KevEvidence,
+    OsvEvidence,
+    SourceAvailability,
+)
+from src.agents.scan_intake import (
+    ScanIntakeAgent,
+    ScanIntakeInput,
+    ScanIntakeRejectionNotice,
+    ScanIntakeResult,
+    ScanIntakeStatus,
+)
+from src.agents.verification import (
+    CheckSeverity,
+    CheckStatus,
+    VerificationAgent,
+    VerificationAgentStatus,
+    VerificationCheckResult,
+    VerificationInput,
+    VerificationProvenance,
+    VerificationResult,
+)
 from src.agents.supervisor import SupervisorAgent
 
 __all__ = [
+    # Scan Intake Specialist Agent (Phase 9A)
+    "ScanIntakeAgent",
+    "ScanIntakeInput",
+    "ScanIntakeResult",
+    "ScanIntakeStatus",
+    "ScanIntakeRejectionNotice",
+
+    # Exploitability Specialist Agent (Phase 9B)
+    "ExploitabilityAgent",
+    "ExploitabilityInput",
+    "ExploitabilityResult",
+    "ExploitabilityAgentStatus",
+    "ExploitabilityMaturity",
+    "AssessmentConfidence",
+    "EvidenceStatus",
+    "KevEvidence",
+    "EpssEvidence",
+    "OsvEvidence",
+    "SourceAvailability",
+
+    # Asset Criticality Specialist Agent (Phase 9C)
+    "AssetCriticalityAgent",
+    "AssetCriticalityInput",
+    "AssetCriticalityResult",
+    "AssetCriticalityStatus",
+    "AssetSourceAvailability",
+
+    # Risk Combination Specialist Agent (Phase 9D)
+    "RiskCombinationAgent",
+    "RiskCombinationInput",
+    "RiskCombinationResult",
+    "RiskCombinationStatus",
+    "RiskEvidenceConsistency",
+    "RiskEvidenceProvenance",
+
+    # Patch Plan Specialist Agent (Phase 9E)
+    "PatchPlanAgent",
+    "PatchPlanInput",
+    "PatchPlanResult",
+    "PatchPlanAgentStatus",
+    "DeferralReason",
+    "DeferredFindingDetail",
+    "ScheduledFindingDetail",
+    "PatchPlanProvenance",
+
+    # Verification Specialist Agent (Phase 9F)
+    "VerificationAgent",
+    "VerificationInput",
+    "VerificationResult",
+    "VerificationAgentStatus",
+    "CheckStatus",
+    "CheckSeverity",
+    "VerificationCheckResult",
+    "VerificationProvenance",
+
     # Workflow Types & Contexts
     "AgentWorkflowType",
     "SupervisorWorkflowType",
