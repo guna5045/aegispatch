@@ -9,6 +9,9 @@ from config.constants import (
     DEFAULT_DATABASE_ECHO,
     DEFAULT_DATABASE_URL,
     DEFAULT_LOG_LEVEL,
+    DEFAULT_API_HOST,
+    DEFAULT_API_PORT,
+    DEFAULT_API_PREFIX,
 )
 
 
@@ -25,6 +28,9 @@ class Settings:
         "1",
         "yes",
     )
+    api_host: str = os.getenv("API_HOST", DEFAULT_API_HOST)
+    api_port: int = int(os.getenv("API_PORT", str(DEFAULT_API_PORT)))
+    api_prefix: str = os.getenv("API_PREFIX", DEFAULT_API_PREFIX)
     
     # Model provider configuration placeholders
     model_provider: Optional[str] = os.getenv("MODEL_PROVIDER")

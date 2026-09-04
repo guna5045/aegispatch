@@ -83,6 +83,25 @@ class PersistenceService:
         return AssetRepository(session).get_by_asset_id(asset_id)
 
     @staticmethod
+    def filter_assets(
+        session: Session,
+        environment: Optional[str] = None,
+        criticality: Optional[str] = None,
+        network_exposure: Optional[str] = None,
+        page: int = 1,
+        page_size: int = 20,
+    ) -> tuple[List[Asset], int]:
+        """Query and paginate enterprise assets with optional filtering."""
+        offset = (page - 1) * page_size
+        return AssetRepository(session).filter_and_paginate(
+            environment=environment,
+            criticality=criticality,
+            network_exposure=network_exposure,
+            offset=offset,
+            limit=page_size,
+        )
+
+    @staticmethod
     def list_controls_for_asset(session: Session, asset_id: str) -> List[SecurityControl]:
         """List active compensating security controls protecting an asset."""
         return ControlRepository(session).list_by_asset(asset_id)
@@ -106,6 +125,29 @@ class PersistenceService:
         """Retrieve all vulnerability findings affecting a specific asset."""
         return VulnerabilityRepository(session).list_by_asset(asset_id)
 
+    @staticmethod
+    def filter_findings(
+        session: Session,
+        query: Optional[str] = None,
+        severity: Optional[str] = None,
+        status: Optional[str] = None,
+        asset_id: Optional[str] = None,
+        cve_id: Optional[str] = None,
+        page: int = 1,
+        page_size: int = 20,
+    ) -> tuple[List[VulnerabilityFinding], int]:
+        """Search and paginate vulnerability scan findings."""
+        offset = (page - 1) * page_size
+        return VulnerabilityRepository(session).search_and_paginate(
+            query=query,
+            severity=severity,
+            status=status,
+            asset_id=asset_id,
+            cve_id=cve_id,
+            offset=offset,
+            limit=page_size,
+        )
+
     # ------------------------------------------------------------------
     # Policies
     # ------------------------------------------------------------------
@@ -119,6 +161,26 @@ class PersistenceService:
     def get_policy(session: Session, policy_id: str) -> Optional[PolicyDocument]:
         """Retrieve a policy document by its domain policy_id."""
         return PolicyRepository(session).get_by_policy_id(policy_id)
+
+    @staticmethod
+    def filter_policies(
+        session: Session,
+        status: Optional[str] = None,
+        policy_type: Optional[str] = None,
+    ) -> List[PolicyDocument]:
+        """Filter policy documents by lifecycle status or category."""
+        return PolicyRepository(session).filter_policies(status=status, policy_type=policy_type)
+
+    # ------------------------------------------------------------------
+    # Threat Intelligence (Offline / Stored Only)
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def get_threat_observations_for_cve(
+        session: Session, cve_id: str
+    ) -> List[ThreatIntelligenceObservation]:
+        """List stored offline threat intelligence observations for a CVE."""
+        return ThreatIntelligenceRepository(session).list_by_cve(cve_id)
 
     # ------------------------------------------------------------------
     # Risk Assessments (Reusing Phase 3 Deterministic Engine Results)
@@ -212,6 +274,20 @@ class PersistenceService:
         """Retrieve the most recent computed risk assessment for a finding."""
         return RiskAssessmentRepository(session).get_latest_for_finding(finding_id)
 
+    @staticmethod
+    def filter_highest_risks(
+        session: Session,
+        decision: Optional[str] = None,
+        risk_tier: Optional[str] = None,
+        limit: int = 10,
+    ) -> List[RiskAssessment]:
+        """List highest risk assessments ordered by ERS descending."""
+        return RiskAssessmentRepository(session).filter_highest_risk(
+            decision=decision,
+            risk_tier=risk_tier,
+            limit=limit,
+        )
+
     # ------------------------------------------------------------------
     # Patch Remediation Plans
     # ------------------------------------------------------------------
@@ -230,6 +306,42 @@ class PersistenceService:
                 item.patch_plan_id = created_plan.plan_id
                 repo.add_item(item)
         return repo.get_plan_with_items(created_plan.plan_id) or created_plan
+
+    @staticmethod
+    def create_patch_plan(
+        session: Session,
+        plan: PatchPlan,
+    ) -> PatchPlan:
+        """Create a patch plan and commit the transaction boundary."""
+        repo = PatchPlanRepository(session)
+        created = repo.create(plan)
+        session.commit()
+        session.refresh(created)
+        return created
+
+    @staticmethod
+    def add_item_to_patch_plan(
+        session: Session,
+        item: PatchPlanItem,
+    ) -> PatchPlanItem:
+        """Add a scheduled item to an existing patch plan and commit the transaction boundary."""
+        repo = PatchPlanRepository(session)
+        created = repo.add_item(item)
+        session.commit()
+        session.refresh(created)
+        return created
+
+    @staticmethod
+    def update_patch_plan(
+        session: Session,
+        plan: PatchPlan,
+    ) -> PatchPlan:
+        """Update an existing plan and commit the transaction boundary."""
+        repo = PatchPlanRepository(session)
+        updated = repo.update(plan)
+        session.commit()
+        session.refresh(updated)
+        return updated
 
     @staticmethod
     def get_patch_plan(session: Session, plan_id: str) -> Optional[PatchPlan]:

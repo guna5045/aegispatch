@@ -8,3 +8,6 @@ APP_DESCRIPTION: str = "Context-driven vulnerability prioritization and remediat
 DEFAULT_LOG_LEVEL: str = "INFO"
 DEFAULT_DATABASE_URL: str = "sqlite:///data/runtime/aegispatch.db"
 DEFAULT_DATABASE_ECHO: bool = False
+DEFAULT_API_HOST: str = "127.0.0.1"
+DEFAULT_API_PORT: int = 8000
+DEFAULT_API_PREFIX: str = "/api/v1"

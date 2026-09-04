@@ -49,6 +49,20 @@ class PolicyRepository:
         )
         return list(self.session.scalars(stmt).all())
 
+    def filter_policies(
+        self,
+        status: Optional[str] = None,
+        policy_type: Optional[str] = None,
+    ) -> List[PolicyDocument]:
+        """List policies filtered by status and/or classification type, sorted by policy_id."""
+        stmt = select(PolicyDocument)
+        if status:
+            stmt = stmt.where(PolicyDocument.status == status)
+        if policy_type:
+            stmt = stmt.where(PolicyDocument.policy_type == policy_type)
+        stmt = stmt.order_by(PolicyDocument.policy_id.asc())
+        return list(self.session.scalars(stmt).all())
+
     def create(self, policy: PolicyDocument) -> PolicyDocument:
         """Persist a new policy document to the session and flush."""
         self.session.add(policy)

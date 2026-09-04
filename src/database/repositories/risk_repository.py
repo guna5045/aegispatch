@@ -84,6 +84,25 @@ class RiskAssessmentRepository:
         )
         return list(self.session.scalars(stmt).all())
 
+    def filter_highest_risk(
+        self,
+        decision: Optional[str] = None,
+        risk_tier: Optional[str] = None,
+        limit: int = 10,
+    ) -> List[RiskAssessment]:
+        """List highest-risk evaluations filtered by decision or risk tier, ordered by ERS descending."""
+        stmt = select(RiskAssessment)
+        if decision:
+            stmt = stmt.where(RiskAssessment.decision == decision)
+        if risk_tier:
+            stmt = stmt.where(RiskAssessment.risk_tier == risk_tier)
+        stmt = stmt.order_by(
+            RiskAssessment.environmental_risk_score.desc(),
+            RiskAssessment.assessed_at.desc(),
+            RiskAssessment.id.desc(),
+        ).limit(limit)
+        return list(self.session.scalars(stmt).all())
+
     def create(self, assessment: RiskAssessment) -> RiskAssessment:
         """Persist a new computed risk assessment to the session and flush."""
         self.session.add(assessment)

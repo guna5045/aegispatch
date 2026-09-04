@@ -54,6 +54,31 @@ class AssetRepository:
         )
         return list(self.session.scalars(stmt).all())
 
+    def filter_and_paginate(
+        self,
+        environment: Optional[str] = None,
+        criticality: Optional[str] = None,
+        network_exposure: Optional[str] = None,
+        offset: int = 0,
+        limit: int = 20,
+    ) -> tuple[List[Asset], int]:
+        """Filter assets by attributes and return paginated items and total matching count."""
+        stmt = select(Asset)
+        if environment:
+            stmt = stmt.where(Asset.environment == environment)
+        if criticality:
+            stmt = stmt.where(Asset.criticality == criticality)
+        if network_exposure:
+            stmt = stmt.where(Asset.network_exposure == network_exposure)
+
+        from sqlalchemy import func
+        count_stmt = select(func.count()).select_from(stmt.subquery())
+        total = self.session.scalar(count_stmt) or 0
+
+        paginated_stmt = stmt.order_by(Asset.asset_id.asc()).offset(offset).limit(limit)
+        items = list(self.session.scalars(paginated_stmt).all())
+        return items, total
+
     def create(self, asset: Asset) -> Asset:
         """Persist a new asset to the session and flush."""
         self.session.add(asset)

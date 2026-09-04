@@ -93,11 +93,41 @@ Aegis Patch utilizes SQLite with SQLAlchemy 2.x for local persistence:
 - **Persistence Service (`src/services/persistence_service.py`):**
   - Clean integration layer coordinating repositories, transactions, benchmark ingestion, Phase 3 risk result persistence, and patch plan item scheduling.
   - Supports historical risk evaluation accumulation and patch plan dependency ordering.
-- **Architectural Boundary:**
-  - Streamlit UI remains safely backed by deterministic benchmark JSON during Phase 5 to prevent startup delays and avoid automatic ingestion on every page load.
-  - Phase 6 (FastAPI Backend) will leverage `PersistenceService` as the unified data access gateway.
 - **Initialization & Verification:** Schema creation via `init_db()`, connectivity check via `check_db_health()`.
 - **Git Safety:** Generated runtime database files in `data/runtime/` and `*.db` are strictly ignored by Git.
+
+---
+
+## FastAPI Backend (Phase 6)
+
+Aegis Patch provides a modern, RESTful FastAPI backend (`src/api/`) offering thin, validated endpoints decoupled from internal persistence queries and risk algorithms:
+
+- **Application Entry Point:** `src.api.main:app` (via `create_app()` factory).
+- **Base Versioned API Prefix:** `/api/v1`
+- **Interactive Documentation:** Swagger UI at `http://localhost:8000/docs` and ReDoc at `http://localhost:8000/redoc`.
+- **Core Endpoints:**
+  - `GET /` — API gateway info and metadata links.
+  - `GET /api/v1/health` — System and database connectivity status check.
+  - `GET /api/v1/assets` — Paginated assets with environment, criticality, and network exposure filters.
+  - `GET /api/v1/assets/{asset_id}` — Asset detail with active compensating controls and finding metrics.
+  - `GET /api/v1/assets/{asset_id}/findings` — Scanner findings affecting the specified asset.
+  - `GET /api/v1/vulnerabilities` — Paginated findings with free-text search (`search`), `severity`, and `status` filters.
+  - `GET /api/v1/vulnerabilities/{finding_id}` — Detailed vulnerability description and advisory links.
+  - `GET /api/v1/vulnerabilities/{finding_id}/risk` — Latest persisted contextual risk evaluation and ERS components.
+  - `GET /api/v1/risk/highest` — Top risk assessments ordered by Environmental Risk Score (ERS) descending.
+  - `GET /api/v1/risk/{finding_id}/history` — Chronological risk evaluation history (newest first) for mathematical auditability.
+  - `GET /api/v1/patch-plans` — Persisted remediation plans and capacity limits.
+  - `GET /api/v1/patch-plans/{plan_id}` — Remediation plan with ordered execution sequence items.
+  - `POST /api/v1/patch-plans` — Create a new remediation plan (201 Created).
+  - `POST /api/v1/patch-plans/{plan_id}/items` — Schedule a remediation item into a plan (validates foreign keys and uniqueness).
+  - `PATCH /api/v1/patch-plans/{plan_id}` — Update plan capacity, status, or notes.
+  - `GET /api/v1/policies` — Organizational security and patch remediation policy documents.
+  - `GET /api/v1/policies/{policy_id}` — Policy detail with SHA-256 integrity hash and structured metadata.
+  - `GET /api/v1/threat-intelligence/{cve_id}` — Locally stored offline threat telemetry (0 external network calls).
+- **Local API Launch:**
+  ```bash
+  uvicorn src.api.main:app --reload
+  ```
 
 ---
 
