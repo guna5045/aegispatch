@@ -25,6 +25,7 @@ chroma/
 
 # Generated cache data
 data/cache/
+data/runtime/
 
 # Testing
 .pytest_cache/

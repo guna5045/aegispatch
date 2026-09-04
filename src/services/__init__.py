@@ -28,6 +28,7 @@ from src.services.scenario_service import (
     load_benchmark_scenarios,
     optimize_patch_schedule,
 )
+from src.services.persistence_service import PersistenceService
 from src.services.vulnerability_service import (
     filter_vulnerabilities,
     get_investigation_detail,
@@ -64,4 +65,6 @@ __all__ = [
     "estimate_patch_effort_hours",
     "build_patch_candidates",
     "optimize_patch_schedule",
+    # Persistence Service (Phase 5E)
+    "PersistenceService",
 ]

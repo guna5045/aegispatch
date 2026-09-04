@@ -71,6 +71,36 @@ Built with Streamlit and styled using an enterprise light design system (`#f8faf
 
 ---
 
+## Database Foundation, ORM Models, Repositories & Ingestion (Phase 5A–5D)
+
+Aegis Patch utilizes SQLite with SQLAlchemy 2.x for local persistence:
+- **Location & Configuration:** Configurable via `DATABASE_URL` (default: `sqlite:///data/runtime/aegispatch.db`).
+- **Core Domain Models (`src/database/models/`):**
+  - `Asset`: Enterprise CMDB infrastructure context and metadata.
+  - `VulnerabilityFinding`: Scanner vulnerability findings with CVSS metrics and package info.
+  - `ThreatIntelligenceObservation`: Verified exploit telemetry and EPSS probability observations.
+  - `SecurityControl`: Compensating and mitigating security controls linked to assets.
+  - `RiskAssessment`: Auditable mathematical risk evaluations ($B, T, E, R, M_{control}, ERS$) and decisions.
+  - `PatchPlan` & `PatchPlanItem`: Remediation plans scheduling actions within capacity constraints.
+  - `PolicyDocument`: Governance and patch management policy document metadata.
+- **Repository / Data Access Layer (`src/database/repositories/`):**
+  - `AssetRepository`, `VulnerabilityRepository`, `ThreatIntelligenceRepository`, `ControlRepository`, `RiskAssessmentRepository`, `PatchPlanRepository`, `PolicyRepository`.
+  - Transaction boundary policy: repositories perform `add`, `flush`, and `refresh`; application boundaries govern atomic `commit` and `rollback`.
+- **Benchmark Ingestion Pipeline (`src/database/ingestion/`):**
+  - Populates SQLite deterministically and idempotently from local synthetic sources (`enterprise_cmdb.json` -> 18 assets, 18 controls; `benchmark_60_scans.json` -> 60 findings; `data/policies/*.md` -> 3 policies).
+  - Preserves offline integrity (0 fabricated live threat observations; 0 uncalculated risk assessments).
+  - CLI execution: `python scripts/ingest_benchmark.py`.
+- **Persistence Service (`src/services/persistence_service.py`):**
+  - Clean integration layer coordinating repositories, transactions, benchmark ingestion, Phase 3 risk result persistence, and patch plan item scheduling.
+  - Supports historical risk evaluation accumulation and patch plan dependency ordering.
+- **Architectural Boundary:**
+  - Streamlit UI remains safely backed by deterministic benchmark JSON during Phase 5 to prevent startup delays and avoid automatic ingestion on every page load.
+  - Phase 6 (FastAPI Backend) will leverage `PersistenceService` as the unified data access gateway.
+- **Initialization & Verification:** Schema creation via `init_db()`, connectivity check via `check_db_health()`.
+- **Git Safety:** Generated runtime database files in `data/runtime/` and `*.db` are strictly ignored by Git.
+
+---
+
 ## Safety & Non-Destructive Operation
 
 Aegis Patch is explicitly designed as an advisory and planning platform:
