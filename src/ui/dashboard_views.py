@@ -8,14 +8,21 @@ import pandas as pd
 
 
 def create_decision_chart(decision_counts: Dict[str, int]) -> alt.Chart:
-    """Create a clean horizontal bar chart for Aegis Patch decision distribution."""
-    categories = ["ACT", "ATTEND", "PLAN", "TRACK"]
-    colors = ["#dc2626", "#ea580c", "#2563eb", "#16a34a"]
+    """Create a clean horizontal bar chart for Aegis Patch decision distribution with human-readable action labels."""
+    mapping = [
+        ("Fix Immediately (ACT)", "ACT", "#dc2626"),
+        ("Review Soon (ATTEND)", "ATTEND", "#ea580c"),
+        ("Plan Fix (PLAN)", "PLAN", "#2563eb"),
+        ("Monitor (TRACK)", "TRACK", "#16a34a"),
+    ]
+    labels = [m[0] for m in mapping]
+    colors = [m[2] for m in mapping]
+    counts = [decision_counts.get(m[1], decision_counts.get(m[0], 0)) for m in mapping]
 
     data = pd.DataFrame(
         {
-            "Decision": categories,
-            "Count": [decision_counts.get(cat, 0) for cat in categories],
+            "Action Decision": labels,
+            "Count": counts,
         }
     )
 
@@ -29,17 +36,17 @@ def create_decision_chart(decision_counts: Dict[str, int]) -> alt.Chart:
                 axis=alt.Axis(tickMinStep=1, format="d", gridColor="#f1f5f9"),
             ),
             y=alt.Y(
-                "Decision:N",
-                sort=categories,
+                "Action Decision:N",
+                sort=labels,
                 title=None,
                 axis=alt.Axis(labelFontWeight="bold", labelColor="#0f172a"),
             ),
             color=alt.Color(
-                "Decision:N",
-                scale=alt.Scale(domain=categories, range=colors),
+                "Action Decision:N",
+                scale=alt.Scale(domain=labels, range=colors),
                 legend=None,
             ),
-            tooltip=["Decision:N", "Count:Q"],
+            tooltip=["Action Decision:N", "Count:Q"],
         )
         .properties(height=180)
         .configure_view(strokeWidth=0)

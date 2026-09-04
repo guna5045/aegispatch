@@ -1,11 +1,12 @@
-"""UI rendering helpers for Aegis Patch Scenario Explorer & What-If Demonstration.
+"""UI rendering helpers for Aegis Patch Scenario Explorer, What-If Demonstration, and Patch Plan.
 
-Provides interactive visualizations for benchmark counterexample scenarios A through E
-and the constrained patch-capacity what-if remediation simulation.
+Provides interactive visualizations for benchmark counterexample scenarios A through E,
+the dedicated 16h maintenance Patch Plan view, and the constrained patch-capacity what-if simulation.
 """
 
 from __future__ import annotations
 
+import html
 from typing import Any, Dict
 
 import pandas as pd
@@ -24,13 +25,48 @@ from src.services.scenario_service import (
     get_scenario_comparison_e,
     optimize_patch_schedule,
 )
+from src.services.vulnerability_service import derive_business_area
 from src.ui.styles import (
+    render_business_area_tag,
+    render_capacity_bar,
     render_context_callout,
     render_decision_badge,
+    render_human_approval_callout,
     render_metric_card,
     render_scheduled_badge,
     render_severity_badge,
 )
+
+
+def render_scenario_story_card(before_text: str, change_text: str, after_text: str, why_text: str) -> str:
+    """Render a structured Before -> Change -> After -> Why Did It Change card."""
+    return f"""
+    <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 18px 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);">
+        <div style="font-size: 0.8rem; font-weight: 700; color: #1d4ed8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;">
+            Contextual Shift Progression
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 12px; align-items: center; margin-bottom: 14px;">
+            <div style="background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 10px 14px;">
+                <div style="font-size: 0.72rem; font-weight: 700; color: #991b1b; text-transform: uppercase;">1. Before (CVSS Alone)</div>
+                <div style="font-size: 0.86rem; font-weight: 600; color: #7f1d1d; margin-top: 4px;">{html.escape(before_text)}</div>
+            </div>
+            <div style="font-size: 1.2rem; color: #94a3b8; font-weight: bold;">→</div>
+            <div style="background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: 10px 14px;">
+                <div style="font-size: 0.72rem; font-weight: 700; color: #1d4ed8; text-transform: uppercase;">2. Environmental Change</div>
+                <div style="font-size: 0.86rem; font-weight: 600; color: #1e3a8a; margin-top: 4px;">{html.escape(change_text)}</div>
+            </div>
+            <div style="font-size: 1.2rem; color: #94a3b8; font-weight: bold;">→</div>
+            <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 10px 14px;">
+                <div style="font-size: 0.72rem; font-weight: 700; color: #166534; text-transform: uppercase;">3. After (Aegis Priority)</div>
+                <div style="font-size: 0.86rem; font-weight: 600; color: #14532d; margin-top: 4px;">{html.escape(after_text)}</div>
+            </div>
+        </div>
+        <div style="background-color: #f8fafc; border-left: 4px solid #3b82f6; padding: 10px 14px; border-radius: 4px;">
+            <div style="font-size: 0.78rem; font-weight: 700; color: #1e293b; margin-bottom: 2px;">💡 Why Did It Change?</div>
+            <div style="font-size: 0.85rem; color: #475569; line-height: 1.45;">{html.escape(why_text)}</div>
+        </div>
+    </div>
+    """
 
 
 def render_scenario_header() -> None:
@@ -40,7 +76,7 @@ def render_scenario_header() -> None:
     st.markdown(
         """
         <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #1d4ed8; border-radius: 4px; padding: 10px 16px; margin: 10px 0 20px 0; font-size: 0.86rem; color: #475569;">
-            🛡️ <strong>Benchmark Disclaimer:</strong> Benchmark scenarios use synthetic enterprise context to demonstrate how environmental factors can change prioritization.
+            🛡️ <strong>Benchmark Grounding:</strong> Benchmark scenarios use synthetic enterprise context to demonstrate how environmental factors, threat intelligence, and compensating controls deterministically alter prioritization.
         </div>
         """,
         unsafe_allow_html=True,
@@ -56,6 +92,17 @@ def render_scenario_a_view(comp: Dict[str, Any]) -> None:
             <div class="section-subtitle">{comp['demonstration_goal']}</div>
         </div>
         """,
+        unsafe_allow_html=True,
+    )
+
+    # Before -> Change -> After -> Why Card
+    st.markdown(
+        render_scenario_story_card(
+            before_text="Isolated air-gapped testbed has CVSS 10.0 (Critical); exposed prod gateway has CVSS 7.5 (High).",
+            change_text="Air-gapped lab has 0.0 exposure & no customer data. Prod gateway is Internet-facing with sensitive data.",
+            after_text="Exposed prod elevated to ERS 43.00 (PLAN); isolated lab dropped to ERS 28.01 (TRACK).",
+            why_text="Attackers cannot reach an air-gapped testbed from the outside. The Internet-facing service presents the actual operational attack surface.",
+        ),
         unsafe_allow_html=True,
     )
 
@@ -161,19 +208,19 @@ def render_scenario_a_view(comp: Dict[str, Any]) -> None:
             </div>
             <div style="border-left: 1px solid #e2e8f0; height: 32px;"></div>
             <div>
-                <div class="detail-label">Prioritization Result</div>
-                <div style="font-size: 1.05rem; font-weight: 700; color: #0f172a;">Inversion Verified (PLAN &gt; TRACK)</div>
+                <div class="detail-label">Remediation Triage</div>
+                <div style="font-size: 1.05rem; font-weight: 700; color: #0f172a;">Exposed Prod → PLAN | Isolated Test → TRACK</div>
             </div>
         </div>
         """,
         unsafe_allow_html=True,
     )
 
-    st.markdown(render_context_callout("Key Insight: Context Changes the Ranking", comp["key_insight"]), unsafe_allow_html=True)
+    st.markdown(render_context_callout("Key Insight: Environmental Inversion", comp["key_insight"]), unsafe_allow_html=True)
 
 
 def render_scenario_b_view(comp: Dict[str, Any]) -> None:
-    """Render Scenario B: Threat Intelligence Exploitation Differential."""
+    """Render Scenario B: Threat Intelligence Differential."""
     st.markdown(
         f"""
         <div class="section-header">
@@ -185,13 +232,12 @@ def render_scenario_b_view(comp: Dict[str, Any]) -> None:
     )
 
     st.markdown(
-        """
-        <div style="font-size: 0.85rem; color: #64748b; margin-bottom: 14px;">
-            📌 <strong>Technical Provenance:</strong> The benchmark dataset intentionally does not contain live external threat feeds.
-            Therefore, this scenario contrasts the unaugmented benchmark baseline against a verified-input demonstration fixture
-            to illustrate engine responsiveness to active threat signals without data fabrication.
-        </div>
-        """,
+        render_scenario_story_card(
+            before_text="Standard vulnerability finding evaluated with baseline absence of verified threat intel (T=0.0).",
+            change_text="Threat intel feed activates: weaponized public PoC confirmed and EPSS probability rises to 45.0%.",
+            after_text="Threat score jumps from 0.0 to 56.0; ERS surges from 43.60 to 61.52 (+17.92 points).",
+            why_text="Active exploit code drastically increases the statistical probability of real-world compromise.",
+        ),
         unsafe_allow_html=True,
     )
 
@@ -205,22 +251,31 @@ def render_scenario_b_view(comp: Dict[str, Any]) -> None:
             f"""
             <div class="detail-box">
                 <div class="detail-label" style="color: #64748b; margin-bottom: 4px;">Benchmark Baseline</div>
-                <div style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin-bottom: 6px;">
-                    {base['finding_id']} • {base['cve_id']}
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span class="detail-label">{base['finding_id']} • {base['cve_id']}</span>
+                    {render_severity_badge(base['severity'])}
                 </div>
-                <p style="font-size: 0.85rem; color: #475569; margin-bottom: 10px;">{base['title']}</p>
-                <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 8px 12px; font-size: 0.82rem; margin-bottom: 12px;">
-                    <div><strong>Base CVSS:</strong> {base['cvss_score']} ({base['severity']})</div>
-                    <div><strong>Threat Status:</strong> <em>{base['threat_status']}</em></div>
-                    <div><strong>Calculated Threat Score (T):</strong> <span class="math-token">{base['threat_score']}</span></div>
+                <div style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin-bottom: 6px;">{base['title']}</div>
+                <div class="highlight-diff" style="border-left-color: #94a3b8; background-color: #f8fafc;">
+                    <div style="font-size: 0.82rem; color: #475569; line-height: 1.6;">
+                        <div><strong>Threat Feed:</strong> {base['threat_status']}</div>
+                        <div><strong>CISA KEV:</strong> Not confirmed</div>
+                        <div><strong>EPSS Probability:</strong> Not available (unaugmented)</div>
+                        <div><strong>Public PoC:</strong> Not confirmed</div>
+                        <div><strong>Threat Factor Score (T):</strong> 0.0 / 100</div>
+                    </div>
                 </div>
-                <hr style="border-color: #e2e8f0; margin: 12px 0 8px 0;">
+                <hr style="border-color: #e2e8f0; margin: 14px 0 10px 0;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <div class="detail-label">Baseline ERS</div>
-                        <span style="font-size: 1.5rem; font-weight: 700; color: #475569;">{base['environmental_risk_score']}</span>
+                        <span style="font-size: 1.6rem; font-weight: 700; color: #2563eb;">{base['environmental_risk_score']}</span>
+                        <span style="font-size: 0.8rem; color: #64748b;"> / 100</span>
                     </div>
-                    {render_decision_badge(base['aegis_decision'])}
+                    <div style="text-align: right;">
+                        <div class="detail-label">Decision</div>
+                        {render_decision_badge(base['aegis_decision'])}
+                    </div>
                 </div>
             </div>
             """,
@@ -230,36 +285,67 @@ def render_scenario_b_view(comp: Dict[str, Any]) -> None:
     with col_dem:
         st.markdown(
             f"""
-            <div class="detail-box" style="border: 2px solid #fed7aa; background-color: #fffaf5;">
-                <div class="detail-label" style="color: #c2410c; margin-bottom: 4px;">Verified-Input Demonstration</div>
-                <div style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin-bottom: 6px;">
-                    {dem['finding_id']} • {dem['cve_id']}
+            <div class="detail-box" style="border: 2px solid #fed7aa;">
+                <div class="detail-label" style="color: #ea580c; margin-bottom: 4px;">Verified Threat Feed Demonstration</div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span class="detail-label">{dem['finding_id']} • {dem['cve_id']}</span>
+                    {render_severity_badge(dem['severity'])}
                 </div>
-                <p style="font-size: 0.85rem; color: #475569; margin-bottom: 10px;">{dem['title']}</p>
-                <div style="background-color: #ffffff; border: 1px solid #fed7aa; border-radius: 4px; padding: 8px 12px; font-size: 0.82rem; margin-bottom: 12px;">
-                    <div><strong>Base CVSS:</strong> {dem['cvss_score']} ({dem['severity']})</div>
-                    <div><strong>Threat Status:</strong> <strong>{dem['threat_status']}</strong></div>
-                    <div><strong>Calculated Threat Score (T):</strong> <span class="math-token" style="background-color: #fff7ed; border-color: #fed7aa; color: #c2410c;">{dem['threat_score']}</span></div>
+                <div style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin-bottom: 6px;">{dem['title']}</div>
+                <div class="highlight-diff" style="border-left-color: #ea580c; background-color: #fff7ed;">
+                    <div style="font-size: 0.82rem; color: #9a3412; line-height: 1.6;">
+                        <div><strong>Threat Feed:</strong> Verified Input Demonstration</div>
+                        <div><strong>CISA KEV:</strong> Not confirmed in catalog</div>
+                        <div><strong>EPSS Probability:</strong> <strong>45.0% (88.0th percentile)</strong></div>
+                        <div><strong>Public PoC:</strong> <strong>Weaponized Exploit Available</strong></div>
+                        <div><strong>Threat Factor Score (T):</strong> <strong>56.0 / 100</strong></div>
+                    </div>
                 </div>
-                <hr style="border-color: #fed7aa; margin: 12px 0 8px 0;">
+                <hr style="border-color: #e2e8f0; margin: 14px 0 10px 0;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <div class="detail-label">Elevated ERS</div>
-                        <span style="font-size: 1.5rem; font-weight: 700; color: #c2410c;">{dem['environmental_risk_score']}</span>
-                        <span style="font-size: 0.82rem; font-weight: 700; color: #dc2626;"> (+{comp['ers_jump']} pts)</span>
+                        <div class="detail-label">Augmented ERS</div>
+                        <span style="font-size: 1.6rem; font-weight: 700; color: #ea580c;">{dem['environmental_risk_score']}</span>
+                        <span style="font-size: 0.8rem; color: #64748b;"> / 100</span>
                     </div>
-                    {render_decision_badge(dem['aegis_decision'])}
+                    <div style="text-align: right;">
+                        <div class="detail-label">Decision</div>
+                        {render_decision_badge(dem['aegis_decision'])}
+                    </div>
                 </div>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
-    st.markdown(render_context_callout("Key Insight: Threat Evidence Modulates Operational Priority", comp["key_insight"]), unsafe_allow_html=True)
+    # Jump Banner
+    st.markdown(
+        f"""
+        <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px 18px; margin: 16px 0; display: flex; justify-content: space-around; align-items: center; text-align: center;">
+            <div>
+                <div class="detail-label">Threat Factor Jump</div>
+                <div style="font-size: 1.15rem; font-weight: 700; color: #ea580c;">0.0 → 56.0 (+56.0 pts)</div>
+            </div>
+            <div style="border-left: 1px solid #e2e8f0; height: 32px;"></div>
+            <div>
+                <div class="detail-label">Composite ERS Escalation</div>
+                <div style="font-size: 1.15rem; font-weight: 700; color: #dc2626;">+{comp['ers_jump']} pts (Accelerated Triage)</div>
+            </div>
+            <div style="border-left: 1px solid #e2e8f0; height: 32px;"></div>
+            <div>
+                <div class="detail-label">Provenance Integrity</div>
+                <div style="font-size: 0.95rem; font-weight: 600; color: #475569;">Faithful zero-preservation when unpopulated</div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(render_context_callout("Key Insight: Threat Intelligence Acceleration", comp["key_insight"]), unsafe_allow_html=True)
 
 
 def render_scenario_c_view(comp: Dict[str, Any]) -> None:
-    """Render Scenario C: Compensating Controls Risk Mitigation."""
+    """Render Scenario C: Compensating Control Dampening."""
     st.markdown(
         f"""
         <div class="section-header">
@@ -271,11 +357,12 @@ def render_scenario_c_view(comp: Dict[str, Any]) -> None:
     )
 
     st.markdown(
-        f"""
-        <div style="font-size: 0.88rem; color: #0f172a; margin-bottom: 12px;">
-            <strong>Underlying Vulnerability:</strong> <code>{comp['shared_cve']}</code> (libcurl heap overflow, CVSS {comp['cvss_score']})
-        </div>
-        """,
+        render_scenario_story_card(
+            before_text="Both hosts share CVSS 9.8 (Critical) for CVE-2023-38545 (libcurl heap buffer overflow).",
+            change_text="Host 1 has active Cloudflare Enterprise WAF (M_control=0.85); Host 2 has no active L7 filtering (M_control=1.00).",
+            after_text="Host 1 risk score is dampened by 8.61 points (57.40 down to 48.79); Host 2 remains at full 57.40 unmitigated risk.",
+            why_text="Layer 7 inspection rules mitigate exploitation vectors, reducing operational risk while permanent patch is queued.",
+        ),
         unsafe_allow_html=True,
     )
 
@@ -284,35 +371,39 @@ def render_scenario_c_view(comp: Dict[str, Any]) -> None:
     prot = comp["protected_asset"]
     unprot = comp["unprotected_asset"]
 
+    prot_controls_text = ", ".join(prot["controls"]) if prot.get("controls") else "None configured"
+    unprot_controls_text = ", ".join(unprot["controls"]) if unprot.get("controls") else "None active"
+
     with col_prot:
         st.markdown(
             f"""
             <div class="detail-box" style="border: 2px solid #bbf7d0;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                    <span class="detail-label">Protected Infrastructure</span>
-                    <span class="status-badge status-operational">🛡️ Active Mitigations</span>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span class="detail-label">{prot['finding_id']} • {comp['shared_cve']}</span>
+                    {render_severity_badge('CRITICAL')}
                 </div>
-                <div style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin-bottom: 4px;">
-                    {prot['hostname']} (<code>{prot['asset_id']}</code>)
-                </div>
-                <div style="font-size: 0.82rem; color: #64748b; margin-bottom: 10px;">
-                    {prot['environment']} • {prot['criticality']} • {prot['network_exposure']}
-                </div>
+                <div style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin-bottom: 6px;">Protected: {prot['hostname']}</div>
+                <div style="font-size: 0.85rem; color: #64748b; margin-bottom: 12px;">Asset ID: <code>{prot['asset_id']}</code> ({prot['environment']})</div>
                 <div class="highlight-diff" style="border-left-color: #16a34a; background-color: #f0fdf4;">
-                    <div style="font-size: 0.82rem; color: #166534; line-height: 1.55;">
-                        <div><strong>Controls:</strong> {", ".join(prot['controls'])}</div>
+                    <div style="font-size: 0.82rem; color: #14532d; line-height: 1.6;">
+                        <div><strong>Active Controls:</strong> {prot_controls_text}</div>
+                        <div><strong>Control Status:</strong> ACTIVE (Layer 7 Inspection)</div>
                         <div><strong>Unmitigated Risk (R):</strong> {prot['unmitigated_risk']} / 100</div>
-                        <div><strong>Control Multiplier (M_control):</strong> <span class="math-token">{prot['control_multiplier']}</span> (-15% discount)</div>
-                        <div><strong>Residual Risk Dampened:</strong> -{prot['points_dampened']} points</div>
+                        <div><strong>Control Multiplier (M_control):</strong> <strong>{prot['control_multiplier']} (-15% dampening)</strong></div>
+                        <div><strong>Points Dampened:</strong> <span style="font-size: 0.95rem; font-weight: 700; color: #166534;">-{prot['points_dampened']} pts</span></div>
                     </div>
                 </div>
-                <hr style="border-color: #bbf7d0; margin: 12px 0 8px 0;">
+                <hr style="border-color: #e2e8f0; margin: 14px 0 10px 0;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <div class="detail-label">Residual ERS</div>
-                        <span style="font-size: 1.5rem; font-weight: 700; color: #166534;">{prot['environmental_risk_score']}</span>
+                        <div class="detail-label">Dampened ERS</div>
+                        <span style="font-size: 1.6rem; font-weight: 700; color: #166534;">{prot['environmental_risk_score']}</span>
+                        <span style="font-size: 0.8rem; color: #64748b;"> / 100</span>
                     </div>
-                    {render_decision_badge(prot['aegis_decision'])}
+                    <div style="text-align: right;">
+                        <div class="detail-label">Aegis Decision</div>
+                        {render_decision_badge(prot['aegis_decision'])}
+                    </div>
                 </div>
             </div>
             """,
@@ -323,46 +414,60 @@ def render_scenario_c_view(comp: Dict[str, Any]) -> None:
         st.markdown(
             f"""
             <div class="detail-box">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                    <span class="detail-label">Unprotected Infrastructure</span>
-                    <span style="color: #64748b; font-size: 0.78rem; font-style: italic;">No controls</span>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span class="detail-label">{unprot['finding_id']} • {comp['shared_cve']}</span>
+                    {render_severity_badge('CRITICAL')}
                 </div>
-                <div style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin-bottom: 4px;">
-                    {unprot['hostname']} (<code>{unprot['asset_id']}</code>)
-                </div>
-                <div style="font-size: 0.82rem; color: #64748b; margin-bottom: 10px;">
-                    {unprot['environment']} • {unprot['criticality']} • {unprot['network_exposure']}
-                </div>
-                <div class="highlight-diff" style="border-left-color: #cbd5e1; background-color: #f8fafc;">
-                    <div style="font-size: 0.82rem; color: #475569; line-height: 1.55;">
-                        <div><strong>Controls:</strong> None configured</div>
-                        <div><strong>Control Multiplier (M_control):</strong> <span class="math-token">1.00</span> (0% discount)</div>
+                <div style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin-bottom: 6px;">Unmitigated: {unprot['hostname']}</div>
+                <div style="font-size: 0.85rem; color: #64748b; margin-bottom: 12px;">Asset ID: <code>{unprot['asset_id']}</code> ({unprot['environment']})</div>
+                <div class="highlight-diff" style="border-left-color: #94a3b8; background-color: #f8fafc;">
+                    <div style="font-size: 0.82rem; color: #475569; line-height: 1.6;">
+                        <div><strong>Active Controls:</strong> {unprot_controls_text}</div>
+                        <div><strong>Control Multiplier (M_control):</strong> <span class="math-token">{unprot['control_multiplier']}</span> (1.00 = No reduction)</div>
                         <div><strong>Exposure Mitigation:</strong> None (Full environmental blast radius applies)</div>
                     </div>
                 </div>
-                <hr style="border-color: #e2e8f0; margin: 12px 0 8px 0;">
+                <hr style="border-color: #e2e8f0; margin: 14px 0 10px 0;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <div class="detail-label">Environmental ERS</div>
-                        <span style="font-size: 1.5rem; font-weight: 700; color: #0f172a;">{unprot['environmental_risk_score']}</span>
+                        <div class="detail-label">Full Exposure ERS</div>
+                        <span style="font-size: 1.6rem; font-weight: 700; color: #dc2626;">{unprot['environmental_risk_score']}</span>
+                        <span style="font-size: 0.8rem; color: #64748b;"> / 100</span>
                     </div>
-                    {render_decision_badge(unprot['aegis_decision'])}
+                    <div style="text-align: right;">
+                        <div class="detail-label">Aegis Decision</div>
+                        {render_decision_badge(unprot['aegis_decision'])}
+                    </div>
                 </div>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
+    # Dampening Benefit Banner
     st.markdown(
         f"""
-        <div style="font-size: 0.8rem; color: #64748b; margin-top: 8px;">
-            ⚠️ <em>{comp['caveat']}</em>
+        <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px 18px; margin: 16px 0; display: flex; justify-content: space-around; align-items: center; text-align: center;">
+            <div>
+                <div class="detail-label">Risk Dampening Credit</div>
+                <div style="font-size: 1.15rem; font-weight: 700; color: #166534;">-{prot['points_dampened']} pts ({prot['control_multiplier']}x multiplier)</div>
+            </div>
+            <div style="border-left: 1px solid #e2e8f0; height: 32px;"></div>
+            <div>
+                <div class="detail-label">Vulnerability Lifecycle</div>
+                <div style="font-size: 1.05rem; font-weight: 700; color: #0f172a;">Mitigated ≠ Removed (Patch Still Required)</div>
+            </div>
+            <div style="border-left: 1px solid #e2e8f0; height: 32px;"></div>
+            <div>
+                <div class="detail-label">Operational Benefit</div>
+                <div style="font-size: 0.95rem; font-weight: 600; color: #2563eb;">Buys Triage Time for Orderly Maintenance</div>
+            </div>
         </div>
         """,
         unsafe_allow_html=True,
     )
 
-    st.markdown(render_context_callout("Key Insight: Controls Mitigate Risk, Not Vulnerability Existence", comp["key_insight"]), unsafe_allow_html=True)
+    st.markdown(render_context_callout("Key Insight: Defense-in-Depth Dampening", comp["key_insight"]), unsafe_allow_html=True)
 
 
 def render_scenario_d_view(comp: Dict[str, Any]) -> None:
@@ -377,26 +482,29 @@ def render_scenario_d_view(comp: Dict[str, Any]) -> None:
         unsafe_allow_html=True,
     )
 
-    asset = comp["asset"]
+    st.markdown(
+        render_scenario_story_card(
+            before_text="5 distinct vulnerabilities on the critical customer database (ASSET-002) with varying CVSS (5.3 to 9.8).",
+            change_text="All 5 vulnerabilities reside on the same mission-critical production database server.",
+            after_text="A single planned maintenance window patches all 5 issues simultaneously, eliminating maximum compound risk.",
+            why_text="Intra-asset sequencing groups patches by physical machine, eliminating compound blast radius in one maintenance shutdown.",
+        ),
+        unsafe_allow_html=True,
+    )
 
-    # Asset Header Card
+    asset = comp["asset"]
     st.markdown(
         f"""
         <div class="detail-box" style="margin-bottom: 16px;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
                 <div>
-                    <div class="detail-label">Asset Concentration Target</div>
-                    <div style="font-size: 1.25rem; font-weight: 700; color: #0f172a;">
-                        {asset['hostname']} (<code>{asset['asset_id']}</code>)
-                    </div>
-                    <div style="font-size: 0.85rem; color: #475569; margin-top: 2px;">
-                        <strong>Owner:</strong> {asset['owner_team']} &nbsp;|&nbsp;
-                        <strong>Environment:</strong> {asset['environment']} &nbsp;|&nbsp;
-                        <strong>Criticality:</strong> {asset['criticality']} &nbsp;|&nbsp;
-                        <strong>Exposure:</strong> {asset['network_exposure']}
+                    <span style="font-size: 1.15rem; font-weight: 700; color: #0f172a;">Hotspot Host: {asset['hostname']}</span>
+                    <span style="color: #64748b; font-size: 0.9rem; margin-left: 6px;">(<code>{asset['asset_id']}</code>)</span>
+                    <div style="font-size: 0.85rem; color: #475569; margin-top: 4px;">
+                        Environment: <strong>{asset['environment']}</strong> • Criticality: <strong>{asset['criticality']}</strong> • Exposure: <strong>{asset['network_exposure']}</strong>
                     </div>
                 </div>
-                <div style="display: flex; gap: 20px; text-align: right; margin-top: 6px;">
+                <div style="display: flex; gap: 16px; text-align: center;">
                     <div>
                         <div class="detail-label">Finding Count</div>
                         <span style="font-size: 1.4rem; font-weight: 700; color: #0f172a;">{asset['finding_count']}</span>
@@ -464,6 +572,16 @@ def render_scenario_e_view(comp: Dict[str, Any]) -> None:
             <div class="section-subtitle">{comp['demonstration_goal']}</div>
         </div>
         """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        render_scenario_story_card(
+            before_text="Same CVE-2023-38545 (libcurl) with static CVSS 9.8 present on 4 different machines across the company.",
+            change_text="Assets span from Internet-facing production gateway to non-prod sandbox and air-gapped vault.",
+            after_text="ERS spreads across 15.02 points (from 48.79 PLAN down to 33.77 TRACK).",
+            why_text="Vulnerability danger is not an intrinsic property of software alone—it depends on the machine executing it.",
+        ),
         unsafe_allow_html=True,
     )
 
@@ -569,6 +687,9 @@ def render_what_if_capacity_view(
     candidates = build_patch_candidates(findings, assets, assessments)
     plan_result = optimize_patch_schedule(candidates, capacity_hours, findings, assets)
 
+    # Capacity utilization bar
+    st.markdown(render_capacity_bar(plan_result['total_scheduled_effort_hours'], plan_result['capacity_limit_hours']), unsafe_allow_html=True)
+
     # Summary KPI Cards
     k1, k2, k3, k4, k5 = st.columns(5)
     with k1:
@@ -606,6 +727,9 @@ def render_what_if_capacity_view(
 
     df_data = []
     for r in all_rows:
+        finding = findings.get(r["finding_id"])
+        asset = assets.get(finding.asset_id) if finding else None
+        biz_area = derive_business_area(finding, asset)
         df_data.append(
             {
                 "Status": r["status"],
@@ -613,6 +737,7 @@ def render_what_if_capacity_view(
                 "Candidate ID": r["candidate_id"],
                 "Finding ID": r["finding_id"],
                 "CVE ID": r["cve_id"],
+                "Business Area": biz_area,
                 "Target Hostname": r["hostname"],
                 "Environment": r["environment"],
                 "Risk Tier": r["risk_tier"],
@@ -633,6 +758,7 @@ def render_what_if_capacity_view(
             "Candidate ID": st.column_config.TextColumn("Candidate", width="small"),
             "Finding ID": st.column_config.TextColumn("Finding ID", width="small"),
             "CVE ID": st.column_config.TextColumn("CVE ID", width="medium"),
+            "Business Area": st.column_config.TextColumn("Business Area", width="medium"),
             "Target Hostname": st.column_config.TextColumn("Hostname", width="medium"),
             "Environment": st.column_config.TextColumn("Env", width="small"),
             "Risk Tier": st.column_config.TextColumn("Risk Tier", width="small"),
@@ -651,3 +777,198 @@ def render_what_if_capacity_view(
         ),
         unsafe_allow_html=True,
     )
+
+
+def render_patch_plan_view(
+    findings: Dict[str, VulnerabilityFinding],
+    assets: Dict[str, Asset],
+    assessments: Dict[str, RiskAssessment],
+) -> None:
+    """Render the dedicated enterprise Patch Plan orchestration view."""
+    # 1. Header & Purpose
+    st.markdown(
+        """
+        <div class="section-header">
+            <h3 class="section-title">Remediation Patch Plan</h3>
+            <div class="section-subtitle">Recommended remediation schedule for the upcoming 16-hour maintenance window</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # 2. Mandatory Human Approval Callout
+    st.markdown(render_human_approval_callout(), unsafe_allow_html=True)
+
+    # Build candidates and solve optimization for default 16h window
+    candidates = build_patch_candidates(findings, assets, assessments)
+    plan_result = optimize_patch_schedule(candidates, DEFAULT_MAINTENANCE_CAPACITY_HOURS, findings, assets)
+
+    # 3. Capacity Utilization Progress Bar
+    st.markdown(
+        render_capacity_bar(
+            plan_result["total_scheduled_effort_hours"],
+            plan_result["capacity_limit_hours"],
+        ),
+        unsafe_allow_html=True,
+    )
+
+    # 4. Summary Metric Cards
+    k1, k2, k3, k4 = st.columns(4)
+    with k1:
+        st.markdown(
+            render_metric_card(
+                "Maintenance Window",
+                f"{plan_result['capacity_limit_hours']} hrs",
+                "Approved operational labor budget",
+            ),
+            unsafe_allow_html=True,
+        )
+    with k2:
+        st.markdown(
+            render_metric_card(
+                "Scheduled Effort",
+                f"{plan_result['total_scheduled_effort_hours']} hrs",
+                f"{plan_result['remaining_capacity_hours']} hrs buffer remaining",
+            ),
+            unsafe_allow_html=True,
+        )
+    with k3:
+        st.markdown(
+            render_metric_card(
+                "Total Risk Reduction",
+                f"{plan_result['total_expected_risk_reduction']} pts",
+                "Contextual ERS eliminated this window",
+            ),
+            unsafe_allow_html=True,
+        )
+    with k4:
+        st.markdown(
+            render_metric_card(
+                "Patches Scheduled",
+                f"{plan_result['scheduled_count']} of {len(candidates)}",
+                f"{plan_result['deferred_count']} deferred to next window",
+            ),
+            unsafe_allow_html=True,
+        )
+
+    st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
+
+    # 5. Scheduled Candidates Table
+    st.markdown(
+        f"""
+        <div class="section-header">
+            <h4 class="section-title" style="color: #166534;">Scheduled for Maintenance ({plan_result['scheduled_count']} Patches)</h4>
+            <div class="section-subtitle">Optimal candidate combination fitting within available hours while maximizing risk reduction</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    sched_rows = []
+    for r in plan_result["scheduled_candidates"]:
+        finding = findings.get(r["finding_id"])
+        asset = assets.get(finding.asset_id) if finding else None
+        sched_rows.append(
+            {
+                "Rank": f"#{r['rank']}",
+                "Candidate ID": r["candidate_id"],
+                "CVE ID": r["cve_id"],
+                "Title": finding.title if finding else "Unknown",
+                "Business Area": derive_business_area(finding, asset),
+                "Target Hostname": r["hostname"],
+                "Environment": r["environment"],
+                "Risk Tier": r["risk_tier"],
+                "Effort (Hours)": r["estimated_cost_hours"],
+                "Risk Reduction": r["expected_risk_reduction"],
+                "Efficiency Ratio": r["efficiency_ratio"],
+            }
+        )
+
+    df_sched = pd.DataFrame(sched_rows)
+    st.dataframe(
+        df_sched,
+        width="stretch",
+        hide_index=True,
+        column_config={
+            "Rank": st.column_config.TextColumn("Rank", width="small"),
+            "Candidate ID": st.column_config.TextColumn("Candidate", width="small"),
+            "CVE ID": st.column_config.TextColumn("CVE ID", width="medium"),
+            "Title": st.column_config.TextColumn("Vulnerability Title", width="large"),
+            "Business Area": st.column_config.TextColumn("Business Area", width="medium"),
+            "Target Hostname": st.column_config.TextColumn("Target Host", width="medium"),
+            "Environment": st.column_config.TextColumn("Env", width="small"),
+            "Risk Tier": st.column_config.TextColumn("Risk Tier", width="small"),
+            "Effort (Hours)": st.column_config.NumberColumn("Effort (h)", format="%.1f", width="small"),
+            "Risk Reduction": st.column_config.NumberColumn("Risk Reduction", format="%.2f", width="small"),
+            "Efficiency Ratio": st.column_config.NumberColumn("Efficiency", format="%.2f", width="small"),
+        },
+    )
+
+    st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
+
+    # 6. Deferred Candidates Table with Explicit Reasons
+    st.markdown(
+        f"""
+        <div class="section-header">
+            <h4 class="section-title" style="color: #475569;">Deferred Remediation Candidates ({plan_result['deferred_count']} Patches)</h4>
+            <div class="section-subtitle">Candidates deferred to the next maintenance cycle with explicit operational rationale</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    def_rows = []
+    rem_hours = plan_result["remaining_capacity_hours"]
+    for r in plan_result["deferred_candidates"]:
+        finding = findings.get(r["finding_id"])
+        asset = assets.get(finding.asset_id) if finding else None
+        effort = r["estimated_cost_hours"]
+
+        if effort > rem_hours:
+            defer_reason = f"Exceeds remaining window buffer ({rem_hours:.1f}h available vs {effort:.1f}h required); queued for cycle 2"
+        else:
+            defer_reason = f"Lower risk efficiency ratio ({r['efficiency_ratio']:.2f}) than scheduled candidates; deferred per knapsack policy"
+
+        def_rows.append(
+            {
+                "Rank": f"#{r['rank']}",
+                "Candidate ID": r["candidate_id"],
+                "CVE ID": r["cve_id"],
+                "Business Area": derive_business_area(finding, asset),
+                "Target Hostname": r["hostname"],
+                "Effort (Hours)": effort,
+                "Risk Reduction": r["expected_risk_reduction"],
+                "Operational Reason for Deferral": defer_reason,
+            }
+        )
+
+    df_def = pd.DataFrame(def_rows)
+    st.dataframe(
+        df_def,
+        width="stretch",
+        hide_index=True,
+        column_config={
+            "Rank": st.column_config.TextColumn("Rank", width="small"),
+            "Candidate ID": st.column_config.TextColumn("Candidate", width="small"),
+            "CVE ID": st.column_config.TextColumn("CVE ID", width="medium"),
+            "Business Area": st.column_config.TextColumn("Business Area", width="medium"),
+            "Target Hostname": st.column_config.TextColumn("Target Host", width="medium"),
+            "Effort (Hours)": st.column_config.NumberColumn("Effort (h)", format="%.1f", width="small"),
+            "Risk Reduction": st.column_config.NumberColumn("Risk Reduction", format="%.2f", width="small"),
+            "Operational Reason for Deferral": st.column_config.TextColumn("Reason for Deferral", width="large"),
+        },
+    )
+
+    # 7. Expandable Knapsack & Optimization Explanation
+    st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
+    with st.expander("📐 How Patch Plan Optimization Works (Knapsack Algorithm & Safety Constraints)"):
+        st.markdown(
+            """
+            **Optimization Formulation:**
+            - **Problem Type:** 0/1 Knapsack Optimization under operational constraints (`POL-SEC-04-patching.md §4.2.2`).
+            - **Objective Function:** $\\max \\sum_{i} x_i \\cdot \\Delta R_i$ subject to $\\sum_{i} x_i \\cdot c_i \\le C_{limit}$, where $x_i \\in \\{0, 1\\}$.
+            - **Efficiency Ratio:** $\\text{Ratio}_i = \\frac{\\Delta R_i}{c_i}$ (Risk Reduction per Engineering Hour).
+            - **Deterministic Tie-Breaking:** If two candidates yield identical efficiency, priority is given to the higher absolute risk reduction, then lower candidate ID.
+            - **Safety Guarantee:** Aegis Patch creates prioritized patch plans with explicit rollback verifications. All production deployments require human operator approval.
+            """
+        )
