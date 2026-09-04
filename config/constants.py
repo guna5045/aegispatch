@@ -1,0 +1,9 @@
+"""Foundational constants for AegisPatch."""
+
+APP_NAME: str = "AegisPatch"
+APP_VERSION: str = "0.1.0"
+APP_DESCRIPTION: str = "Context-driven vulnerability prioritization and remediation planning system"
+
+# Default configuration values
+DEFAULT_LOG_LEVEL: str = "INFO"
+DEFAULT_DATABASE_URL: str = "sqlite:///./aegispatch.db"

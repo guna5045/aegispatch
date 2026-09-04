@@ -1,0 +1,1 @@
+"""AegisPatch core package."""
