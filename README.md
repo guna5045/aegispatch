@@ -1,55 +1,82 @@
-# AegisPatch
+# Aegis Patch
 
-AegisPatch is a context-driven vulnerability prioritization and remediation planning system.
+**Context-Driven Vulnerability Prioritization and Remediation Orchestration**
+
+Aegis Patch is an enterprise-grade security platform that evaluates vulnerabilities in the context of their real environment, determining which vulnerabilities deserve attention first rather than relying on generic CVSS severity alone.
 
 ---
 
 ## Overview
 
-### Problem
-Security operations and engineering teams often face hundreds or thousands of vulnerability alerts, but have strictly limited patching capacity and maintenance windows. Traditional prioritization relies almost exclusively on generic CVSS severity scores, failing to capture organization-specific environmental context—such as network exposure, asset criticality, compensating controls, active exploit intelligence, and operational constraints.
+### The Problem
+Traditional vulnerability management relies almost exclusively on CVSS base scores. This leads to critical alert fatigue: an isolated test server with a CVSS 10.0 vulnerability often gets prioritized over a CVSS 7.5 vulnerability actively exploited on an internet-facing production host with customer financial records.
 
-### Intended Solution
-AegisPatch implements a multi-agent AI system designed to intelligently evaluate vulnerability evidence, asset exposure, and organizational policies. The system prioritizes actual business risk, synthesizes optimal remediation and patch schedules, and rigorously verifies its own recommendations before submitting them for human approval.
+### The Aegis Patch Solution
+Aegis Patch evaluates vulnerability severity in conjunction with active threat intelligence, asset criticality, network exposure, data sensitivity, and compensating security controls. It computes a deterministic **Environmental Risk Score (ERS)** to partition findings into actionable decision bands: **ACT**, **ATTEND**, **PLAN**, and **TRACK**.
 
 ---
 
-## Planned Architecture
+## Core Risk Methodology (Phase 3)
 
-The planned system architecture includes:
+The deterministic Environmental Risk Score (ERS) is calculated on a 0–100 scale:
 
-- **Frontend:** Streamlit-based operational dashboard for reviewing vulnerability queues, agent audit trails, and remediation plans.
-- **Backend:** FastAPI service orchestrating pipeline execution, data intake, and human-in-the-loop workflows.
-- **Orchestration:** LangGraph state machine coordinating multi-agent workflows with deterministic state transitions.
-- **Specialized Agents (7 planned):**
-  1. Ingestion & Normalization Agent
-  2. Asset & Context Enrichment Agent
-  3. Threat Intelligence Agent
-  4. Risk Prioritization Agent
-  5. Remediation Planning Agent
-  6. Verification & Critic Agent
-  7. Reporting & Artifact Agent
-- **Deterministic Tools:** Algorithmic scoring tools, formula-based risk calculators, and constraint-based schedule optimizers.
-- **Data & Storage:** SQLite for relational state and history; local RAG / vector retrieval for organizational policies and security standards.
-- **Threat Intelligence:** Cached and public intelligence feeds (e.g., CISA KEV, EPSS).
-- **Human Approval:** Strict human-in-the-loop sign-off before any remediation artifact is finalized.
+$$ERS = R \times M_{control}$$
+
+Where:
+- **Base Score ($B \in [0, 100]$)**: Derived from CVSS score ($CVSS \times 10$).
+- **Threat Score ($T \in [0, 100]$)**: Derived from known exploitation in the wild (KEV), EPSS percentiles, and POC availability. Missing threat intelligence remains transparently unassessed rather than defaulted to zero.
+- **Environmental Score ($E \in [0, 100]$)**: Derived from asset business criticality, network exposure (internet-facing vs. internal), data sensitivity classification, and deployment environment.
+- **Unmitigated Risk ($R \in [0, 100]$)**: Weighted synthesis of Base ($w_B=0.40$), Threat ($w_T=0.30$), and Environmental ($w_E=0.30$) dimensions.
+- **Control Multiplier ($M_{control} \in [0.40, 1.00]$)**: Reflects validated compensating controls (e.g., WAF, network segmentation, runtime agents). Compensating controls reduce residual environmental risk without removing the underlying vulnerability.
+
+### Decision Bands
+- **ACT ($ERS \ge 70.0$)**: Immediate emergency remediation within 24–48 hours.
+- **ATTEND ($50.0 \le ERS < 70.0$)**: Next scheduled maintenance sprint (7–14 days).
+- **PLAN ($30.0 \le ERS < 50.0$)**: Standard monthly maintenance patching.
+- **TRACK ($ERS < 30.0$)**: Routine monitoring and regular release cycle.
+
+---
+
+## Web Application Features (Phase 4)
+
+Built with Streamlit and styled using an enterprise light design system (`#f8fafc` background, crisp cards, restrained typography, and accessible indicators):
+
+1. **Overview Dashboard**:
+   - Executive KPIs: Findings Analyzed, Assets Affected, Critical Severity, Priority Findings (ACT + ATTEND), and Average ERS.
+   - Dynamic multi-attribute filtering: Vulnerability Severity, Aegis Decision, Asset Environment, and Asset Criticality.
+   - Side-by-side distribution charts: Aegis Patch Decisions vs. Vulnerability Severity.
+   - Environmental Risk Overview: ERS score band distribution.
+   - Core Differentiator Callout: Context Changes Priority.
+   - Assets with Highest-Risk Findings: Ranked by peak ERS among hosted vulnerabilities.
+   - Priority Preview: Top 5 prioritized findings.
+   - Asset Context Deep Dive: Interactive asset inspection and compensating control review.
+
+2. **Vulnerabilities Page**:
+   - Multi-field search across Finding IDs, CVEs, package names, asset IDs, and hostnames.
+   - Deterministic sorting by ERS descending, CVSS descending, and finding ID ascending.
+   - Interactive deep-dive investigation view:
+     - Clear narrative: "Why Aegis Patch Prioritized This".
+     - Complete mathematical breakdown: $B$, $T$, $E$, $R$, $M_{control}$, and final $ERS$.
+     - Threat intelligence provenance and verified exploit evidence.
+     - Target asset context and compensating control status.
+     - Recommended remediation guidance, verified policy references, and raw evidence isolation.
+
+3. **Scenario Explorer & What-If Simulation**:
+   - **Scenario A**: Exposure & Criticality Inversion (CVSS 10.0 internal test vs. CVSS 7.5 exposed production).
+   - **Scenario B**: Threat Intelligence Differential (exploited vs. unexploited vulnerability prioritization).
+   - **Scenario C**: Compensating Control Dampening (residual risk reduction from active WAF/segmentation).
+   - **Scenario D**: Intra-Asset Hotspot Prioritization (evaluating multiple findings on a single host).
+   - **Scenario E**: Cross-Asset Prevalent Vulnerability Spread (same CVE across diverse environments).
+   - **What-If Patch Capacity Simulation**: Interactive engineering capacity slider with deterministic knapsack optimization under strict resource limits.
 
 ---
 
 ## Safety & Non-Destructive Operation
 
-AegisPatch is explicitly designed as an advisory and planning system:
-- **No destructive actions:** The system will never execute destructive real-world infrastructure modifications or unauthorized automated patching.
-- **Safe artifacts:** Outputs consist of auditable plans, playbooks, verification reports, and patch schedules.
-- **Local / Synthetic validation:** Demonstrations and test harnesses utilize synthetic and local data.
-
----
-
-## Project Status
-
-- **Current Status:** Foundation / Scaffolding Phase.
-- Initial directory structure, configuration framework, environment templates, and test harness are established.
-- Core agents, LangGraph orchestration, RAG pipelines, and UI components will be introduced in subsequent milestone phases.
+Aegis Patch is explicitly designed as an advisory and planning platform:
+- **No destructive actions**: The system does not execute destructive infrastructure modifications or uncoordinated automated patching.
+- **Safe artifacts**: All outputs consist of auditable plans, playbooks, verification reports, and patch schedules.
+- **Benchmark integrity**: Demonstrations and evaluation harnesses utilize validated synthetic datasets (`benchmark_60_scans.json`, `enterprise_cmdb.json`).
 
 ---
 
@@ -70,6 +97,9 @@ AegisPatch is explicitly designed as an advisory and planning system:
    ```bash
    # On Windows PowerShell:
    .\.venv\Scripts\Activate.ps1
+
+   # On macOS/Linux:
+   source .venv/bin/activate
    ```
 
 3. Copy environment configuration:
@@ -82,7 +112,12 @@ AegisPatch is explicitly designed as an advisory and planning system:
    pip install -r requirements.txt
    ```
 
-5. Run foundation tests:
+5. Run test suite:
    ```bash
    pytest
+   ```
+
+6. Launch the Aegis Patch web application:
+   ```bash
+   streamlit run app.py
    ```
