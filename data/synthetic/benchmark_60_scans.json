@@ -1,0 +1,1502 @@
+[
+  {
+    "finding_id": "FINDING-001",
+    "cve_id": "CVE-2023-38545",
+    "title": "curl SOCKS5 heap-based buffer overflow",
+    "description": "This flaw makes curl annex a heap-based buffer overflow in the SOCKS5 proxy handshake.",
+    "cvss_score": 9.8,
+    "severity": "CRITICAL",
+    "affected_package": "libcurl4",
+    "installed_version": "7.88.1-10",
+    "fixed_version": "8.4.0-1",
+    "asset_id": "ASSET-001",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-38545",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "VULN-CURL-SOCKS5",
+      "package_type": "dpkg",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-002",
+    "cve_id": "CVE-2023-44487",
+    "title": "HTTP/2 Rapid Reset Denial of Service",
+    "description": "The HTTP/2 protocol allows a denial of service (server resource consumption) because request cancellation can reset many streams quickly.",
+    "cvss_score": 7.5,
+    "severity": "HIGH",
+    "affected_package": "nghttp2",
+    "installed_version": "1.52.0-1",
+    "fixed_version": "1.57.0-1",
+    "asset_id": "ASSET-001",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-44487",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "VULN-HTTP2-RAPIDRESET",
+      "package_type": "dpkg",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-003",
+    "cve_id": "CVE-2023-45288",
+    "title": "Go net/http HTTP/2 continuous CONTINUATION frames DoS",
+    "description": "An attacker may send an unreasonably large chunk of CONTINUATION frames causing out-of-memory denial of service in Go HTTP/2 servers.",
+    "cvss_score": 7.5,
+    "severity": "HIGH",
+    "affected_package": "golang.org/x/net",
+    "installed_version": "v0.22.0",
+    "fixed_version": "v0.23.0",
+    "asset_id": "ASSET-001",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-45288",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "GO-MOD-NET-HTTP2",
+      "package_type": "gomod",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-004",
+    "cve_id": "CVE-2023-29406",
+    "title": "Go crypto/elliptic P-256 scalar mult parameter validation flaw",
+    "description": "Insufficient validation of elliptic curve parameters in crypto/elliptic leading to potential panic.",
+    "cvss_score": 3.7,
+    "severity": "LOW",
+    "affected_package": "go-crypto",
+    "installed_version": "1.20.4",
+    "fixed_version": "1.20.6",
+    "asset_id": "ASSET-001",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-29406",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "GO-CRYPTO-P256",
+      "package_type": "gomod",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-005",
+    "cve_id": "CVE-2022-3602",
+    "title": "OpenSSL X.509 email address 4-byte buffer overrun",
+    "description": "A buffer overrun can be triggered in X.509 certificate verification during name constraint checking.",
+    "cvss_score": 7.5,
+    "severity": "HIGH",
+    "affected_package": "openssl",
+    "installed_version": "3.0.2-0ubuntu1.6",
+    "fixed_version": "3.0.2-0ubuntu1.7",
+    "asset_id": "ASSET-002",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-3602",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "OPENSSL-PUNYCODE-OVERRUN",
+      "package_type": "dpkg",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-006",
+    "cve_id": "CVE-2023-44487",
+    "title": "HTTP/2 Rapid Reset Denial of Service in Auth Ingress",
+    "description": "Rapid stream reset flood in HTTP/2 identity service endpoint.",
+    "cvss_score": 7.5,
+    "severity": "HIGH",
+    "affected_package": "nghttp2",
+    "installed_version": "1.52.0-1",
+    "fixed_version": "1.57.0-1",
+    "asset_id": "ASSET-002",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-44487",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "VULN-HTTP2-RAPIDRESET",
+      "package_type": "dpkg",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-007",
+    "cve_id": "CVE-2023-4911",
+    "title": "glibc ld.so buffer overflow in GLIBC_TUNABLES (Looney Tunables)",
+    "description": "Buffer overflow in the GNU C Library dynamic loader ld.so processing of GLIBC_TUNABLES environment variable.",
+    "cvss_score": 7.8,
+    "severity": "HIGH",
+    "affected_package": "libc6",
+    "installed_version": "2.35-0ubuntu3.1",
+    "fixed_version": "2.35-0ubuntu3.4",
+    "asset_id": "ASSET-002",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-4911",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "GLIBC-LOONEY-TUNABLES",
+      "package_type": "dpkg",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-008",
+    "cve_id": "CVE-2022-22978",
+    "title": "Spring Security Authorization Bypass with RegexRequestMatcher",
+    "description": "In Spring Security, RegexRequestMatcher can easily be misconfigured to allow authorization bypass.",
+    "cvss_score": 9.8,
+    "severity": "CRITICAL",
+    "affected_package": "org.springframework.security:spring-security-web",
+    "installed_version": "5.6.3",
+    "fixed_version": "5.6.4",
+    "asset_id": "ASSET-002",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-22978",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "SPRING-SEC-REGEX-BYPASS",
+      "package_type": "maven",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-009",
+    "cve_id": "CVE-2023-48795",
+    "title": "SSH Terrapin Prefix Truncation Weakness",
+    "description": "Prefix truncation attacks in SSH 2.0 handshake using ChaCha20-Poly1305 or CBC with Encrypt-then-MAC.",
+    "cvss_score": 5.9,
+    "severity": "MEDIUM",
+    "affected_package": "openssh-server",
+    "installed_version": "8.9p1-3ubuntu0.4",
+    "fixed_version": "8.9p1-3ubuntu0.6",
+    "asset_id": "ASSET-002",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-48795",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "SSH-TERRAPIN-ATTACK",
+      "package_type": "dpkg",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-010",
+    "cve_id": "CVE-2021-44228",
+    "title": "Apache Log4j2 JNDI Remote Code Execution (Log4Shell)",
+    "description": "Apache Log4j2 JNDI features used in configuration, log messages, and parameters do not protect against attacker controlled LDAP and other JNDI related endpoints.",
+    "cvss_score": 10.0,
+    "severity": "CRITICAL",
+    "affected_package": "org.apache.logging.log4j:log4j-core",
+    "installed_version": "2.14.1",
+    "fixed_version": "2.15.0",
+    "asset_id": "ASSET-003",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-44228",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "LOG4SHELL-JNDI-RCE",
+      "package_type": "maven",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-011",
+    "cve_id": "CVE-2022-22965",
+    "title": "Spring Framework RCE via Data Binding (Spring4Shell)",
+    "description": "A Spring MVC or Spring WebFlux application running on JDK 9+ may be vulnerable to remote code execution via class loader manipulation.",
+    "cvss_score": 9.8,
+    "severity": "CRITICAL",
+    "affected_package": "org.springframework:spring-beans",
+    "installed_version": "5.3.17",
+    "fixed_version": "5.3.18",
+    "asset_id": "ASSET-003",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-22965",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "SPRING4SHELL-CLASSLOADER-RCE",
+      "package_type": "maven",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-012",
+    "cve_id": "CVE-2022-42889",
+    "title": "Apache Commons Text variable interpolation RCE (Text4Shell)",
+    "description": "Apache Commons Text performs variable interpolation, allowing script, dns, and url lookups that lead to arbitrary code execution.",
+    "cvss_score": 9.8,
+    "severity": "CRITICAL",
+    "affected_package": "org.apache.commons:commons-text",
+    "installed_version": "1.9",
+    "fixed_version": "1.10.0",
+    "asset_id": "ASSET-003",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-42889",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "TEXT4SHELL-INTERPOLATION",
+      "package_type": "maven",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-013",
+    "cve_id": "CVE-2023-24998",
+    "title": "Apache Commons FileUpload Request Part DoS",
+    "description": "Apache Commons FileUpload does not limit the number of request parts to process, permitting denial of service.",
+    "cvss_score": 7.5,
+    "severity": "HIGH",
+    "affected_package": "commons-fileupload:commons-fileupload",
+    "installed_version": "1.4",
+    "fixed_version": "1.5",
+    "asset_id": "ASSET-003",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-24998",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "FILEUPLOAD-DOS",
+      "package_type": "maven",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-014",
+    "cve_id": "CVE-2022-3171",
+    "title": "Protocol Buffers parsing recursion depth limit flaw",
+    "description": "A crafted message with deep nesting in Google Protobuf can cause a stack overflow or denial of service.",
+    "cvss_score": 3.3,
+    "severity": "LOW",
+    "affected_package": "com.google.protobuf:protobuf-java",
+    "installed_version": "3.19.4",
+    "fixed_version": "3.19.6",
+    "asset_id": "ASSET-003",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-3171",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "PROTOBUF-STACK-OVERFLOW",
+      "package_type": "maven",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-015",
+    "cve_id": "CVE-2022-21724",
+    "title": "PostgreSQL JDBC Driver arbitrary code execution via plugin",
+    "description": "pgjdbc driver instantiation allows arbitrary class instantiation when using loggerLevel parameter.",
+    "cvss_score": 8.8,
+    "severity": "HIGH",
+    "affected_package": "org.postgresql:postgresql",
+    "installed_version": "42.3.1",
+    "fixed_version": "42.3.3",
+    "asset_id": "ASSET-004",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-21724",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "PGJDBC-PLUGIN-RCE",
+      "package_type": "maven",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-016",
+    "cve_id": "CVE-2023-39417",
+    "title": "PostgreSQL extension script SQL injection",
+    "description": "PostgreSQL extension script substitution flaws permit SQL injection during extension install or update.",
+    "cvss_score": 7.5,
+    "severity": "HIGH",
+    "affected_package": "postgresql-16",
+    "installed_version": "16.0-1",
+    "fixed_version": "16.1-1",
+    "asset_id": "ASSET-004",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-39417",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "PGSQL-EXT-INJECTION",
+      "package_type": "dpkg",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-017",
+    "cve_id": "CVE-2022-0847",
+    "title": "Linux Kernel Dirty Pipe arbitrary file write",
+    "description": "A flaw in copy_page_to_iter_pipe in the Linux kernel allows overwriting data in arbitrary read-only files.",
+    "cvss_score": 7.8,
+    "severity": "HIGH",
+    "affected_package": "linux-image-generic",
+    "installed_version": "5.15.0-25",
+    "fixed_version": "5.15.0-27",
+    "asset_id": "ASSET-004",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-0847",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "DIRTY-PIPE-KERNEL",
+      "package_type": "dpkg",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-018",
+    "cve_id": "CVE-2023-36884",
+    "title": "Windows HTML Remote Code Execution Vulnerability",
+    "description": "Microsoft Windows HTML Office-related remote code execution vulnerability.",
+    "cvss_score": 8.8,
+    "severity": "HIGH",
+    "affected_package": "ms-html-runtime",
+    "installed_version": "10.0.19041.3031",
+    "fixed_version": "10.0.19041.3324",
+    "asset_id": "ASSET-004",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-36884",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "MS-HTML-RCE",
+      "package_type": "windows",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-019",
+    "cve_id": "CVE-2023-26159",
+    "title": "follow-redirects information exposure flaw",
+    "description": "follow-redirects leaks Authorization headers upon cross-origin redirects.",
+    "cvss_score": 6.1,
+    "severity": "MEDIUM",
+    "affected_package": "follow-redirects",
+    "installed_version": "1.15.2",
+    "fixed_version": "1.15.4",
+    "asset_id": "ASSET-005",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-26159",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "NPM-FOLLOW-REDIRECTS-LEAK",
+      "package_type": "npm",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-020",
+    "cve_id": "CVE-2022-25883",
+    "title": "semver Regular Expression Denial of Service (ReDoS)",
+    "description": "ReDoS vulnerability in semver when parsing untrusted version strings with long numeric prefixes.",
+    "cvss_score": 5.3,
+    "severity": "MEDIUM",
+    "affected_package": "semver",
+    "installed_version": "7.3.7",
+    "fixed_version": "7.3.8",
+    "asset_id": "ASSET-005",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-25883",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "NPM-SEMVER-REDOS",
+      "package_type": "npm",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-021",
+    "cve_id": "CVE-2022-29078",
+    "title": "ejs server-side template injection RCE",
+    "description": "Template injection in ejs via settings[view options][outputFunctionName] parameter leading to arbitrary code execution.",
+    "cvss_score": 9.8,
+    "severity": "CRITICAL",
+    "affected_package": "ejs",
+    "installed_version": "3.1.6",
+    "fixed_version": "3.1.7",
+    "asset_id": "ASSET-005",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-29078",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "NPM-EJS-SSTI",
+      "package_type": "npm",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-022",
+    "cve_id": "CVE-2023-30533",
+    "title": "SheetJS prototype pollution via crafted spreadsheet",
+    "description": "Prototype pollution vulnerability in SheetJS xlsx when parsing malformed records.",
+    "cvss_score": 7.5,
+    "severity": "HIGH",
+    "affected_package": "xlsx",
+    "installed_version": "0.19.2",
+    "fixed_version": "0.19.3",
+    "asset_id": "ASSET-005",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-30533",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "NPM-SHEETJS-PROTO-POLLUTION",
+      "package_type": "npm",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-023",
+    "cve_id": "CVE-2022-3602",
+    "title": "OpenSSL buffer overrun in internal order queue client",
+    "description": "A buffer overrun in X.509 email address verification in order fulfillment service.",
+    "cvss_score": 7.5,
+    "severity": "HIGH",
+    "affected_package": "openssl",
+    "installed_version": "3.0.2-0ubuntu1.6",
+    "fixed_version": "3.0.2-0ubuntu1.7",
+    "asset_id": "ASSET-006",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-3602",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "OPENSSL-PUNYCODE-OVERRUN",
+      "package_type": "dpkg",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-024",
+    "cve_id": "CVE-2021-4034",
+    "title": "polkit pkexec local privilege escalation (PwnKit)",
+    "description": "A memory corruption vulnerability in polkit pkexec allows unprivileged users to obtain full root privileges.",
+    "cvss_score": 7.8,
+    "severity": "HIGH",
+    "affected_package": "policykit-1",
+    "installed_version": "0.105-31ubuntu1",
+    "fixed_version": "0.105-31ubuntu1.2",
+    "asset_id": "ASSET-006",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-4034",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "PWNKIT-POLKIT-LPE",
+      "package_type": "dpkg",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-025",
+    "cve_id": "CVE-2021-3156",
+    "title": "Sudo Heap-Based Buffer Overflow (Baron Samedit)",
+    "description": "Heap-based buffer overflow in sudo allows privilege escalation to root via -s or -i flags.",
+    "cvss_score": 7.8,
+    "severity": "HIGH",
+    "affected_package": "sudo",
+    "installed_version": "1.8.31-1ubuntu1.1",
+    "fixed_version": "1.8.31-1ubuntu1.2",
+    "asset_id": "ASSET-006",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-3156",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "SUDO-BARON-SAMEDIT",
+      "package_type": "dpkg",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-026",
+    "cve_id": "CVE-2023-45853",
+    "title": "MiniZip in zlib integer overflow and heap buffer overflow",
+    "description": "MiniZip in zlib allows integer overflow and resultant heap-based buffer overflow via a crafted ZIP header.",
+    "cvss_score": 9.8,
+    "severity": "CRITICAL",
+    "affected_package": "zlib1g",
+    "installed_version": "1:1.2.11.dfsg-2ubuntu9.2",
+    "fixed_version": "1:1.2.11.dfsg-2ubuntu9.3",
+    "asset_id": "ASSET-006",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-45853",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "ZLIB-MINIZIP-OVERFLOW",
+      "package_type": "dpkg",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-027",
+    "cve_id": "CVE-2023-34040",
+    "title": "Spring for Apache Kafka Deserialization Exception Handling flaw",
+    "description": "Spring for Apache Kafka deserialization exception record evaluation flaw allows unauthorized execution path.",
+    "cvss_score": 8.8,
+    "severity": "HIGH",
+    "affected_package": "org.springframework.kafka:spring-kafka",
+    "installed_version": "3.0.9",
+    "fixed_version": "3.0.10",
+    "asset_id": "ASSET-007",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-34040",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "SPRING-KAFKA-DESERIALIZATION",
+      "package_type": "maven",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-028",
+    "cve_id": "CVE-2023-46604",
+    "title": "Apache ActiveMQ OpenWire Remote Code Execution",
+    "description": "Apache ActiveMQ OpenWire protocol unmarshaling allows arbitrary shell command execution via ClassPathXmlApplicationContext.",
+    "cvss_score": 9.8,
+    "severity": "CRITICAL",
+    "affected_package": "org.apache.activemq:activemq-client",
+    "installed_version": "5.18.2",
+    "fixed_version": "5.18.3",
+    "asset_id": "ASSET-007",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-46604",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "ACTIVEMQ-OPENWIRE-RCE",
+      "package_type": "maven",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-029",
+    "cve_id": "CVE-2021-28169",
+    "title": "Eclipse Jetty URL normalization information disclosure",
+    "description": "Requests containing dot segments are handled improperly by Jetty leading to unintended directory access.",
+    "cvss_score": 5.3,
+    "severity": "MEDIUM",
+    "affected_package": "org.eclipse.jetty:jetty-server",
+    "installed_version": "9.4.40.v20210413",
+    "fixed_version": "9.4.41.v20210516",
+    "asset_id": "ASSET-007",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-28169",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "JETTY-NORMALIZATION-DISCLOSURE",
+      "package_type": "maven",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-030",
+    "cve_id": "CVE-2023-38606",
+    "title": "Linux Kernel mm/gup.c memory management state flaw",
+    "description": "A page reference management race in Linux kernel get_user_pages leading to potential memory tampering.",
+    "cvss_score": 7.8,
+    "severity": "HIGH",
+    "affected_package": "linux-image-generic",
+    "installed_version": "5.15.0-30",
+    "fixed_version": "5.15.0-33",
+    "asset_id": "ASSET-008",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-38606",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "KERNEL-GUP-RACE",
+      "package_type": "dpkg",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-031",
+    "cve_id": "CVE-2023-45853",
+    "title": "zlib MiniZip buffer overflow in data warehouse utility",
+    "description": "Heap buffer overflow in zlib minizip library used during analytical archive decompression.",
+    "cvss_score": 9.8,
+    "severity": "CRITICAL",
+    "affected_package": "zlib1g",
+    "installed_version": "1:1.2.11.dfsg-2ubuntu9.2",
+    "fixed_version": "1:1.2.11.dfsg-2ubuntu9.3",
+    "asset_id": "ASSET-008",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-45853",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "ZLIB-MINIZIP-OVERFLOW",
+      "package_type": "dpkg",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-032",
+    "cve_id": "CVE-2022-3786",
+    "title": "OpenSSL X.509 email address variable-length buffer overrun",
+    "description": "Buffer overrun triggered in X.509 certificate verification during name constraint checking in ClickHouse cluster client.",
+    "cvss_score": 7.5,
+    "severity": "HIGH",
+    "affected_package": "openssl",
+    "installed_version": "3.0.2-0ubuntu1.6",
+    "fixed_version": "3.0.2-0ubuntu1.7",
+    "asset_id": "ASSET-008",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-3786",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "OPENSSL-PUNYCODE-OVERRUN-2",
+      "package_type": "dpkg",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-033",
+    "cve_id": "CVE-2023-38035",
+    "title": "Ivanti / Sentry MobileIron Core Apache HTTP Server DoS",
+    "description": "Insufficient payload validation in administrative HTTP interface allows denial of service.",
+    "cvss_score": 7.5,
+    "severity": "HIGH",
+    "affected_package": "apache2",
+    "installed_version": "2.4.52-1ubuntu4.5",
+    "fixed_version": "2.4.52-1ubuntu4.6",
+    "asset_id": "ASSET-009",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-38035",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "APACHE2-PAYLOAD-DOS",
+      "package_type": "dpkg",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-034",
+    "cve_id": "CVE-2023-4911",
+    "title": "glibc Looney Tunables local privilege escalation in SIEM worker",
+    "description": "Buffer overflow in ld.so dynamic loader processing GLIBC_TUNABLES in log collector.",
+    "cvss_score": 7.8,
+    "severity": "HIGH",
+    "affected_package": "libc6",
+    "installed_version": "2.35-0ubuntu3.1",
+    "fixed_version": "2.35-0ubuntu3.4",
+    "asset_id": "ASSET-009",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-4911",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "GLIBC-LOONEY-TUNABLES",
+      "package_type": "dpkg",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-035",
+    "cve_id": "CVE-2021-34527",
+    "title": "Windows Print Spooler Remote Code Execution (PrintNightmare)",
+    "description": "Windows Print Spooler service improperly performs privileged file operations allowing full SYSTEM execution.",
+    "cvss_score": 8.8,
+    "severity": "HIGH",
+    "affected_package": "spoolsv.exe",
+    "installed_version": "10.0.19041.1081",
+    "fixed_version": "10.0.19041.1085",
+    "asset_id": "ASSET-009",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-34527",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "PRINTNIGHTMARE-RCE",
+      "package_type": "windows",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-036",
+    "cve_id": "CVE-2023-46805",
+    "title": "Ivanti Connect Secure Authentication Bypass",
+    "description": "An authentication bypass vulnerability in the web component of Ivanti Connect Secure allows remote access to restricted endpoints.",
+    "cvss_score": 8.2,
+    "severity": "HIGH",
+    "affected_package": "ivanti-ics-web",
+    "installed_version": "9.1.18.1",
+    "fixed_version": "9.1.18.2",
+    "asset_id": "ASSET-010",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-46805",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "IVANTI-AUTH-BYPASS",
+      "package_type": "appliance",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-037",
+    "cve_id": "CVE-2024-21887",
+    "title": "Ivanti Connect Secure Command Injection",
+    "description": "A command injection vulnerability in the web components of Ivanti Connect Secure allows authenticated administrators to execute arbitrary commands.",
+    "cvss_score": 9.1,
+    "severity": "CRITICAL",
+    "affected_package": "ivanti-ics-core",
+    "installed_version": "9.1.18.1",
+    "fixed_version": "9.1.18.2",
+    "asset_id": "ASSET-010",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-21887",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "IVANTI-CMD-INJECTION",
+      "package_type": "appliance",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-038",
+    "cve_id": "CVE-2023-27997",
+    "title": "FortiOS Heap-based buffer overflow in SSL-VPN (XORtigate)",
+    "description": "Heap-based buffer overflow in FortiOS SSL-VPN pre-authentication allows remote code execution.",
+    "cvss_score": 9.8,
+    "severity": "CRITICAL",
+    "affected_package": "fortios-sslvpn",
+    "installed_version": "7.0.10",
+    "fixed_version": "7.0.12",
+    "asset_id": "ASSET-010",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-27997",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "FORTIOS-SSLVPN-OVERFLOW",
+      "package_type": "appliance",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-039",
+    "cve_id": "CVE-2024-21626",
+    "title": "runc container breakout via leaked file descriptor (Leaky Vessels)",
+    "description": "In runc, an attacker can specify a working directory path that uses a leaked file descriptor to gain access to the host filesystem.",
+    "cvss_score": 8.6,
+    "severity": "HIGH",
+    "affected_package": "runc",
+    "installed_version": "1.1.11-0ubuntu1",
+    "fixed_version": "1.1.12-0ubuntu1",
+    "asset_id": "ASSET-011",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-21626",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "RUNC-LEAKY-VESSELS-BREAKOUT",
+      "package_type": "dpkg",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-040",
+    "cve_id": "CVE-2024-23897",
+    "title": "Jenkins CLI arbitrary file read vulnerability",
+    "description": "Jenkins CLI uses args4j parser which expands @ character followed by a path into file contents, allowing arbitrary file reading.",
+    "cvss_score": 9.8,
+    "severity": "CRITICAL",
+    "affected_package": "jenkins-core",
+    "installed_version": "2.441",
+    "fixed_version": "2.442",
+    "asset_id": "ASSET-011",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-23897",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "JENKINS-CLI-ARBITRARY-READ",
+      "package_type": "maven",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-041",
+    "cve_id": "CVE-2023-28840",
+    "title": "Docker Moby overlay network traffic unencrypted flaw",
+    "description": "In Docker Moby, encrypted overlay networks can inadvertently send unencrypted VXLAN packets under specific conditions.",
+    "cvss_score": 7.5,
+    "severity": "HIGH",
+    "affected_package": "docker-ce",
+    "installed_version": "23.0.1-1",
+    "fixed_version": "23.0.3-1",
+    "asset_id": "ASSET-011",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-28840",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "DOCKER-MOBY-OVERLAY-PLAINTEXT",
+      "package_type": "dpkg",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-042",
+    "cve_id": "CVE-2023-22515",
+    "title": "Confluence Data Center Privilege Escalation",
+    "description": "An improper input validation vulnerability in Confluence Data Center setup endpoints allows unauthorized administrator account creation.",
+    "cvss_score": 9.8,
+    "severity": "CRITICAL",
+    "affected_package": "atlassian-confluence",
+    "installed_version": "8.0.0",
+    "fixed_version": "8.0.4",
+    "asset_id": "ASSET-012",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-22515",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "CONFLUENCE-SETUP-PRIVILEGE-ESCALATION",
+      "package_type": "appliance",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-043",
+    "cve_id": "CVE-2022-26134",
+    "title": "Confluence OGNL injection Remote Code Execution",
+    "description": "OGNL injection vulnerability in Confluence Server allows an unauthenticated attacker to execute arbitrary code.",
+    "cvss_score": 9.8,
+    "severity": "CRITICAL",
+    "affected_package": "atlassian-confluence-core",
+    "installed_version": "7.13.0",
+    "fixed_version": "7.13.7",
+    "asset_id": "ASSET-012",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-26134",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "CONFLUENCE-OGNL-RCE",
+      "package_type": "appliance",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-044",
+    "cve_id": "CVE-2022-39284",
+    "title": "code-server CSRF arbitrary code execution",
+    "description": "Cross-site request forgery flaw in code-server terminal creation endpoint allows arbitrary command execution.",
+    "cvss_score": 6.5,
+    "severity": "MEDIUM",
+    "affected_package": "code-server",
+    "installed_version": "4.7.0",
+    "fixed_version": "4.7.1",
+    "asset_id": "ASSET-012",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-39284",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "CODESERVER-CSRF-EXEC",
+      "package_type": "npm",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-045",
+    "cve_id": "CVE-2023-38545",
+    "title": "curl SOCKS5 heap overflow in staging API gateway",
+    "description": "Heap buffer overflow in curl SOCKS5 proxy handshake on staging gateway instance.",
+    "cvss_score": 9.8,
+    "severity": "CRITICAL",
+    "affected_package": "libcurl4",
+    "installed_version": "7.88.1-10",
+    "fixed_version": "8.4.0-1",
+    "asset_id": "ASSET-013",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-38545",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "VULN-CURL-SOCKS5",
+      "package_type": "dpkg",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-046",
+    "cve_id": "CVE-2023-34039",
+    "title": "Spring Cloud Gateway unauthorized routing bypass",
+    "description": "Spring Cloud Gateway path pattern match flaw permits unauthorized route traversal.",
+    "cvss_score": 9.8,
+    "severity": "CRITICAL",
+    "affected_package": "org.springframework.cloud:spring-cloud-gateway-server",
+    "installed_version": "3.1.7",
+    "fixed_version": "3.1.8",
+    "asset_id": "ASSET-013",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-34039",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "SPRING-GATEWAY-BYPASS",
+      "package_type": "maven",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-047",
+    "cve_id": "CVE-2023-20860",
+    "title": "Spring Framework Unsynchronized Path Traversal",
+    "description": "Spring Framework path matching pattern synchronization flaw causing security bypass.",
+    "cvss_score": 7.5,
+    "severity": "HIGH",
+    "affected_package": "org.springframework:spring-webmvc",
+    "installed_version": "5.3.25",
+    "fixed_version": "5.3.26",
+    "asset_id": "ASSET-013",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-20860",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "SPRING-MVC-PATH-BYPASS",
+      "package_type": "maven",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-048",
+    "cve_id": "CVE-2021-44228",
+    "title": "Log4Shell in staging payment processing sandbox",
+    "description": "Log4j JNDI remote code execution present in staging payment mock engine.",
+    "cvss_score": 10.0,
+    "severity": "CRITICAL",
+    "affected_package": "org.apache.logging.log4j:log4j-core",
+    "installed_version": "2.14.1",
+    "fixed_version": "2.15.0",
+    "asset_id": "ASSET-014",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-44228",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "LOG4SHELL-JNDI-RCE",
+      "package_type": "maven",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-049",
+    "cve_id": "CVE-2022-22965",
+    "title": "Spring4Shell in staging payment worker service",
+    "description": "Spring Framework data binding RCE vulnerability in staging mock worker.",
+    "cvss_score": 9.8,
+    "severity": "CRITICAL",
+    "affected_package": "org.springframework:spring-beans",
+    "installed_version": "5.3.17",
+    "fixed_version": "5.3.18",
+    "asset_id": "ASSET-014",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-22965",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "SPRING4SHELL-CLASSLOADER-RCE",
+      "package_type": "maven",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-050",
+    "cve_id": "CVE-2023-48795",
+    "title": "SSH Terrapin weakness in staging payment host",
+    "description": "Prefix truncation weakness in SSH 2.0 handshake in staging VM.",
+    "cvss_score": 5.9,
+    "severity": "MEDIUM",
+    "affected_package": "openssh-server",
+    "installed_version": "8.9p1-3ubuntu0.4",
+    "fixed_version": "8.9p1-3ubuntu0.6",
+    "asset_id": "ASSET-014",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-48795",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "SSH-TERRAPIN-ATTACK",
+      "package_type": "dpkg",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-051",
+    "cve_id": "CVE-2023-38545",
+    "title": "curl SOCKS5 heap overflow in developer sandbox",
+    "description": "Unpatched curl library in active local developer container sandbox.",
+    "cvss_score": 9.8,
+    "severity": "CRITICAL",
+    "affected_package": "libcurl4",
+    "installed_version": "7.88.1-10",
+    "fixed_version": "8.4.0-1",
+    "asset_id": "ASSET-015",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-38545",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "VULN-CURL-SOCKS5",
+      "package_type": "dpkg",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-052",
+    "cve_id": "CVE-2022-41852",
+    "title": "BeanShell arbitrary code execution in dev test container",
+    "description": "bsh (BeanShell) executes arbitrary code when parsing untrusted scripts in experimental dev service.",
+    "cvss_score": 9.8,
+    "severity": "CRITICAL",
+    "affected_package": "org.beanshell:bsh",
+    "installed_version": "2.0b6",
+    "fixed_version": "2.1.1",
+    "asset_id": "ASSET-015",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-41852",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "BEANSHELL-SCRIPT-RCE",
+      "package_type": "maven",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-053",
+    "cve_id": "CVE-2023-22482",
+    "title": "Argo CD improper access control token verification",
+    "description": "Argo CD token verification flaw allows unauthorized access to experimental manifests.",
+    "cvss_score": 6.5,
+    "severity": "MEDIUM",
+    "affected_package": "argocd",
+    "installed_version": "2.5.0",
+    "fixed_version": "2.5.8",
+    "asset_id": "ASSET-015",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-22482",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "ARGOCD-TOKEN-BYPASS",
+      "package_type": "gomod",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-054",
+    "cve_id": "CVE-2022-3602",
+    "title": "OpenSSL buffer overrun in QA automation test node",
+    "description": "OpenSSL X.509 buffer overrun vulnerability on automated testing runner.",
+    "cvss_score": 7.5,
+    "severity": "HIGH",
+    "affected_package": "openssl",
+    "installed_version": "3.0.2-0ubuntu1.6",
+    "fixed_version": "3.0.2-0ubuntu1.7",
+    "asset_id": "ASSET-016",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-3602",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "OPENSSL-PUNYCODE-OVERRUN",
+      "package_type": "dpkg",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-055",
+    "cve_id": "CVE-2024-27198",
+    "title": "JetBrains TeamCity authentication bypass",
+    "description": "Authentication bypass in TeamCity web server allowing remote code execution.",
+    "cvss_score": 9.8,
+    "severity": "CRITICAL",
+    "affected_package": "teamcity-server",
+    "installed_version": "2023.11.3",
+    "fixed_version": "2023.11.4",
+    "asset_id": "ASSET-016",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-27198",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "TEAMCITY-AUTH-BYPASS",
+      "package_type": "appliance",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-056",
+    "cve_id": "CVE-2023-29409",
+    "title": "Go crypto/tls client certificate validation bypass",
+    "description": "In Go crypto/tls, client session tickets can bypass certificate authority revocation checks under rare circumstances.",
+    "cvss_score": 3.7,
+    "severity": "LOW",
+    "affected_package": "golang.org/x/crypto",
+    "installed_version": "v0.9.0",
+    "fixed_version": "v0.12.0",
+    "asset_id": "ASSET-016",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-29409",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "GO-TLS-REVOCATION",
+      "package_type": "gomod",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-057",
+    "cve_id": "CVE-2023-38545",
+    "title": "curl SOCKS5 heap overflow in air-gapped backup vault",
+    "description": "Curl library in tape management utility on physically air-gapped storage server.",
+    "cvss_score": 9.8,
+    "severity": "CRITICAL",
+    "affected_package": "libcurl4",
+    "installed_version": "7.88.1-10",
+    "fixed_version": "8.4.0-1",
+    "asset_id": "ASSET-017",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-38545",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "VULN-CURL-SOCKS5",
+      "package_type": "dpkg",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-058",
+    "cve_id": "CVE-2021-4034",
+    "title": "PwnKit local privilege escalation on air-gapped backup vault",
+    "description": "Polkit pkexec local privilege escalation vulnerability on isolated backup controller.",
+    "cvss_score": 7.8,
+    "severity": "HIGH",
+    "affected_package": "policykit-1",
+    "installed_version": "0.105-31ubuntu1",
+    "fixed_version": "0.105-31ubuntu1.2",
+    "asset_id": "ASSET-017",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-4034",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "PWNKIT-POLKIT-LPE",
+      "package_type": "dpkg",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-059",
+    "cve_id": "CVE-2024-3094",
+    "title": "xz-utils upstream supply-chain backdoor in testbed",
+    "description": "Malicious code discovered in upstream tarballs of xz-utils (versions 5.6.0 and 5.6.1) that hooks RSA decryptions during OpenSSH auth.",
+    "cvss_score": 10.0,
+    "severity": "CRITICAL",
+    "affected_package": "liblzma5",
+    "installed_version": "5.6.0-0.2",
+    "fixed_version": "5.6.1+really5.4.5-1",
+    "asset_id": "ASSET-018",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-3094",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "XZ-BACKDOOR-SUPPLYCHAIN",
+      "package_type": "dpkg",
+      "confidence": "HIGH"
+    }
+  },
+  {
+    "finding_id": "FINDING-060",
+    "cve_id": "CVE-2024-21626",
+    "title": "runc Leaky Vessels container breakout in research sandbox",
+    "description": "File descriptor leak container escape vulnerability in isolated research detonation node.",
+    "cvss_score": 8.6,
+    "severity": "HIGH",
+    "affected_package": "runc",
+    "installed_version": "1.1.11-0ubuntu1",
+    "fixed_version": "1.1.12-0ubuntu1",
+    "asset_id": "ASSET-018",
+    "source": "synthetic_benchmark",
+    "references": [
+      {
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-21626",
+        "source": "NVD",
+        "description": "NVD vulnerability record"
+      }
+    ],
+    "raw_evidence": {
+      "scanner_rule_id": "RUNC-LEAKY-VESSELS-BREAKOUT",
+      "package_type": "dpkg",
+      "confidence": "HIGH"
+    }
+  }
+]

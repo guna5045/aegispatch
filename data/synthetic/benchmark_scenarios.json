@@ -1,0 +1,83 @@
+[
+  {
+    "scenario_id": "SCENARIO-A",
+    "title": "Exposure and Criticality Inversion",
+    "description": "Contrasts a theoretical critical CVSS 10.0 finding in an air-gapped testbed against a high CVSS 7.5 finding on a mission-critical internet-facing production authentication service.",
+    "finding_ids": [
+      "FINDING-059",
+      "FINDING-006"
+    ],
+    "asset_ids": [
+      "ASSET-018",
+      "ASSET-002"
+    ],
+    "intended_comparison": "FINDING-059 has higher base CVSS (10.0 vs 7.5) but is isolated in ASSET-018 (AIR_GAPPED, TESTING, LOW criticality, PUBLIC data). FINDING-006 is in ASSET-002 (INTERNET_FACING, PRODUCTION, CRITICAL criticality, RESTRICTED data).",
+    "expected_qualitative_relationship": "Contextual prioritization elevates FINDING-006 over FINDING-059 despite lower CVSS score."
+  },
+  {
+    "scenario_id": "SCENARIO-B",
+    "title": "Threat Intelligence Exploitation Differential",
+    "description": "Pairs findings where base CVSS scores diverge from real-world exploitability evidence once threat intelligence signals are joined.",
+    "finding_ids": [
+      "FINDING-018",
+      "FINDING-007"
+    ],
+    "asset_ids": [
+      "ASSET-004",
+      "ASSET-002"
+    ],
+    "intended_comparison": "FINDING-018 (CVE-2023-36884, CVSS 8.8) represents a vulnerability without widespread weaponized network exploit tooling, whereas FINDING-007 (CVE-2023-4911, CVSS 7.8) has widely available weaponized exploit proofs-of-concept.",
+    "expected_qualitative_relationship": "Threat-informed prioritization adjusts urgency based on confirmed exploit maturity rather than CVSS alone."
+  },
+  {
+    "scenario_id": "SCENARIO-C",
+    "title": "Compensating Controls Risk Mitigation",
+    "description": "Compares identical or comparable package vulnerabilities between an asset shielded by an active Layer 7 WAF versus an unshielded developer container.",
+    "finding_ids": [
+      "FINDING-001",
+      "FINDING-051"
+    ],
+    "asset_ids": [
+      "ASSET-001",
+      "ASSET-015"
+    ],
+    "intended_comparison": "Both findings share CVE-2023-38545 (libcurl heap overflow). ASSET-001 possesses active Cloudflare Enterprise WAF (CTL-WAF-01) and Anti-DDoS (CTL-DDOS-01), whereas ASSET-015 has zero compensating controls.",
+    "expected_qualitative_relationship": "Active compensating controls dampen immediate exploitative exposure on ASSET-001."
+  },
+  {
+    "scenario_id": "SCENARIO-D",
+    "title": "Intra-Asset Hotspot Prioritization",
+    "description": "Evaluates a single mission-critical asset hosting multiple concurrent findings competing for remediation sequencing within that asset's maintenance window.",
+    "finding_ids": [
+      "FINDING-005",
+      "FINDING-006",
+      "FINDING-007",
+      "FINDING-008",
+      "FINDING-009"
+    ],
+    "asset_ids": [
+      "ASSET-002"
+    ],
+    "intended_comparison": "ASSET-002 (OAuth2 IDP Provider) hosts 5 distinct findings spanning CRITICAL, HIGH, and MEDIUM severities.",
+    "expected_qualitative_relationship": "Prioritizer must rank and sequence remediations within a single asset schedule."
+  },
+  {
+    "scenario_id": "SCENARIO-E",
+    "title": "Cross-Asset Prevalent Vulnerability Spread",
+    "description": "Tracks an identical CVE distributed across multiple infrastructure tiers (Production Internet-facing, Staging, Development, and Air-gapped Storage).",
+    "finding_ids": [
+      "FINDING-001",
+      "FINDING-045",
+      "FINDING-051",
+      "FINDING-057"
+    ],
+    "asset_ids": [
+      "ASSET-001",
+      "ASSET-013",
+      "ASSET-015",
+      "ASSET-017"
+    ],
+    "intended_comparison": "Identical vulnerability CVE-2023-38545 (curl heap overflow) appears on ASSET-001 (Prod Internet-facing Gateway), ASSET-013 (Staging Gateway), ASSET-015 (Internal Dev Sandbox), and ASSET-017 (Air-gapped Backup Vault).",
+    "expected_qualitative_relationship": "Produces four distinct environmental risk ratings for the exact same CVE."
+  }
+]

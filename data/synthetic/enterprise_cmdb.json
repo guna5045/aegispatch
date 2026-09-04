@@ -1,0 +1,539 @@
+[
+  {
+    "asset_id": "ASSET-001",
+    "hostname": "api-gw-prod-01.aegis.internal",
+    "asset_type": "CLOUD_INSTANCE",
+    "business_tier": "MISSION_CRITICAL",
+    "criticality": "CRITICAL",
+    "network_exposure": "INTERNET_FACING",
+    "data_sensitivity": "CONFIDENTIAL",
+    "environment": "PRODUCTION",
+    "owner_team": "Platform Engineering",
+    "patch_window": {
+      "day_of_week": "Sunday",
+      "start_time_utc": "02:00",
+      "duration_hours": 2.0,
+      "timezone": "UTC"
+    },
+    "compensating_controls": [
+      {
+        "control_id": "CTL-WAF-01",
+        "name": "Cloudflare Enterprise WAF",
+        "description": "Layer 7 inspection and managed rulesets blocking known exploit vectors",
+        "status": "ACTIVE"
+      },
+      {
+        "control_id": "CTL-DDOS-01",
+        "name": "Edge Rate Limiting & Anti-DDoS",
+        "description": "Volumetric and behavioral anomaly traffic dampening at the edge",
+        "status": "ACTIVE"
+      }
+    ],
+    "metadata": {
+      "service_role": "Public API Gateway & Reverse Proxy",
+      "os_family": "Linux",
+      "cloud_provider": "AWS",
+      "region": "us-east-1"
+    }
+  },
+  {
+    "asset_id": "ASSET-002",
+    "hostname": "auth-idp-prod-01.aegis.internal",
+    "asset_type": "SERVER",
+    "business_tier": "MISSION_CRITICAL",
+    "criticality": "CRITICAL",
+    "network_exposure": "INTERNET_FACING",
+    "data_sensitivity": "RESTRICTED",
+    "environment": "PRODUCTION",
+    "owner_team": "Identity & Access Management",
+    "patch_window": {
+      "day_of_week": "Sunday",
+      "start_time_utc": "03:00",
+      "duration_hours": 3.0,
+      "timezone": "UTC"
+    },
+    "compensating_controls": [
+      {
+        "control_id": "CTL-WAF-01",
+        "name": "Cloudflare Enterprise WAF",
+        "description": "Layer 7 inspection and managed rulesets blocking known exploit vectors",
+        "status": "ACTIVE"
+      },
+      {
+        "control_id": "CTL-MFA-01",
+        "name": "FIDO2 Hardware Token MFA",
+        "description": "Strict multi-factor authentication enforced for all administrative and user sessions",
+        "status": "ACTIVE"
+      }
+    ],
+    "metadata": {
+      "service_role": "Customer Identity & OAuth2 Provider",
+      "os_family": "Linux",
+      "cloud_provider": "AWS",
+      "region": "us-east-1"
+    }
+  },
+  {
+    "asset_id": "ASSET-003",
+    "hostname": "pay-engine-prod-01.aegis.internal",
+    "asset_type": "SERVER",
+    "business_tier": "MISSION_CRITICAL",
+    "criticality": "CRITICAL",
+    "network_exposure": "DMZ",
+    "data_sensitivity": "RESTRICTED",
+    "environment": "PRODUCTION",
+    "owner_team": "Payment Core Engineering",
+    "patch_window": {
+      "day_of_week": "Saturday",
+      "start_time_utc": "01:00",
+      "duration_hours": 3.0,
+      "timezone": "UTC"
+    },
+    "compensating_controls": [
+      {
+        "control_id": "CTL-EDR-01",
+        "name": "CrowdStrike Falcon Enterprise EDR",
+        "description": "Real-time kernel behavioral monitoring and automated threat containment",
+        "status": "ACTIVE"
+      },
+      {
+        "control_id": "CTL-NET-01",
+        "name": "PCI-DSS Dedicated Microsegmentation",
+        "description": "Strict zero-trust firewall policy allowing only mutual TLS traffic from designated gateways",
+        "status": "ACTIVE"
+      }
+    ],
+    "metadata": {
+      "service_role": "PCI Cardholder Data Processor",
+      "os_family": "Linux",
+      "compliance_scope": "PCI-DSS-Scope-1"
+    }
+  },
+  {
+    "asset_id": "ASSET-004",
+    "hostname": "cust-db-cluster-prod-01.aegis.internal",
+    "asset_type": "DATABASE",
+    "business_tier": "MISSION_CRITICAL",
+    "criticality": "CRITICAL",
+    "network_exposure": "INTERNAL",
+    "data_sensitivity": "RESTRICTED",
+    "environment": "PRODUCTION",
+    "owner_team": "Database Administration",
+    "patch_window": {
+      "day_of_week": "Sunday",
+      "start_time_utc": "04:00",
+      "duration_hours": 4.0,
+      "timezone": "UTC"
+    },
+    "compensating_controls": [
+      {
+        "control_id": "CTL-ENC-01",
+        "name": "Transparent Database Encryption",
+        "description": "AES-256 at-rest and in-transit encryption with KMS envelope key rotation",
+        "status": "ACTIVE"
+      },
+      {
+        "control_id": "CTL-AUD-01",
+        "name": "Immutable Database Audit Logging",
+        "description": "Real-time query log streaming to append-only remote security storage",
+        "status": "ACTIVE"
+      }
+    ],
+    "metadata": {
+      "service_role": "Core Customer Relational Database",
+      "db_engine": "PostgreSQL-16",
+      "ha_mode": "Multi-AZ-Synchronous-Replication"
+    }
+  },
+  {
+    "asset_id": "ASSET-005",
+    "hostname": "web-portal-prod-01.aegis.internal",
+    "asset_type": "APPLICATION",
+    "business_tier": "BUSINESS_CRITICAL",
+    "criticality": "HIGH",
+    "network_exposure": "INTERNET_FACING",
+    "data_sensitivity": "CONFIDENTIAL",
+    "environment": "PRODUCTION",
+    "owner_team": "Digital Experience",
+    "patch_window": {
+      "day_of_week": "Tuesday",
+      "start_time_utc": "03:00",
+      "duration_hours": 2.0,
+      "timezone": "UTC"
+    },
+    "compensating_controls": [
+      {
+        "control_id": "CTL-WAF-02",
+        "name": "AWS WAF Managed Ruleset",
+        "description": "Core rule set protecting against OWASP Top 10 vulnerabilities",
+        "status": "ACTIVE"
+      }
+    ],
+    "metadata": {
+      "service_role": "Customer Web Self-Service Frontend",
+      "runtime": "NodeJS-SSR",
+      "cdn_enabled": "true"
+    }
+  },
+  {
+    "asset_id": "ASSET-006",
+    "hostname": "order-mgmt-srv-01.aegis.internal",
+    "asset_type": "SERVER",
+    "business_tier": "BUSINESS_CRITICAL",
+    "criticality": "HIGH",
+    "network_exposure": "INTERNAL",
+    "data_sensitivity": "CONFIDENTIAL",
+    "environment": "PRODUCTION",
+    "owner_team": "Supply Chain Systems",
+    "patch_window": {
+      "day_of_week": "Thursday",
+      "start_time_utc": "02:00",
+      "duration_hours": 3.0,
+      "timezone": "UTC"
+    },
+    "compensating_controls": [
+      {
+        "control_id": "CTL-EDR-01",
+        "name": "CrowdStrike Falcon Enterprise EDR",
+        "description": "Real-time kernel behavioral monitoring and automated threat containment",
+        "status": "ACTIVE"
+      }
+    ],
+    "metadata": {
+      "service_role": "Order Processing & Fulfillment Orchestrator",
+      "os_family": "Linux",
+      "erp_integration": "active"
+    }
+  },
+  {
+    "asset_id": "ASSET-007",
+    "hostname": "msg-broker-prod-01.aegis.internal",
+    "asset_type": "SERVER",
+    "business_tier": "BUSINESS_CRITICAL",
+    "criticality": "HIGH",
+    "network_exposure": "INTERNAL",
+    "data_sensitivity": "INTERNAL",
+    "environment": "PRODUCTION",
+    "owner_team": "Data Infrastructure",
+    "patch_window": {
+      "day_of_week": "Wednesday",
+      "start_time_utc": "02:00",
+      "duration_hours": 2.5,
+      "timezone": "UTC"
+    },
+    "compensating_controls": [
+      {
+        "control_id": "CTL-ACL-01",
+        "name": "Mutual TLS Broker Authentication",
+        "description": "Enforces cryptographic client certificate authentication for all pub/sub consumers",
+        "status": "ACTIVE"
+      }
+    ],
+    "metadata": {
+      "service_role": "Enterprise Event Bus (Apache Kafka)",
+      "cluster_size": "3-nodes",
+      "replication_factor": "3"
+    }
+  },
+  {
+    "asset_id": "ASSET-008",
+    "hostname": "analytics-warehouse-01.aegis.internal",
+    "asset_type": "DATABASE",
+    "business_tier": "INTERNAL_OPERATIONAL",
+    "criticality": "MEDIUM",
+    "network_exposure": "INTERNAL",
+    "data_sensitivity": "CONFIDENTIAL",
+    "environment": "PRODUCTION",
+    "owner_team": "Business Intelligence",
+    "patch_window": {
+      "day_of_week": "Saturday",
+      "start_time_utc": "05:00",
+      "duration_hours": 4.0,
+      "timezone": "UTC"
+    },
+    "compensating_controls": [],
+    "metadata": {
+      "service_role": "OLAP Analytical Data Warehouse",
+      "db_engine": "ClickHouse",
+      "backup_schedule": "daily"
+    }
+  },
+  {
+    "asset_id": "ASSET-009",
+    "hostname": "siem-log-collector-01.aegis.internal",
+    "asset_type": "SERVER",
+    "business_tier": "BUSINESS_CRITICAL",
+    "criticality": "HIGH",
+    "network_exposure": "DMZ",
+    "data_sensitivity": "INTERNAL",
+    "environment": "PRODUCTION",
+    "owner_team": "SecOps",
+    "patch_window": {
+      "day_of_week": "Monday",
+      "start_time_utc": "01:00",
+      "duration_hours": 2.0,
+      "timezone": "UTC"
+    },
+    "compensating_controls": [
+      {
+        "control_id": "CTL-EDR-01",
+        "name": "CrowdStrike Falcon Enterprise EDR",
+        "description": "Real-time kernel behavioral monitoring and automated threat containment",
+        "status": "ACTIVE"
+      }
+    ],
+    "metadata": {
+      "service_role": "Central Security Event Ingestion & Syslog Relay",
+      "os_family": "Linux",
+      "siem_pipeline": "Logstash-Elastic"
+    }
+  },
+  {
+    "asset_id": "ASSET-010",
+    "hostname": "corp-vpn-gw-01.aegis.internal",
+    "asset_type": "NETWORK_DEVICE",
+    "business_tier": "BUSINESS_CRITICAL",
+    "criticality": "HIGH",
+    "network_exposure": "INTERNET_FACING",
+    "data_sensitivity": "INTERNAL",
+    "environment": "PRODUCTION",
+    "owner_team": "Network Operations",
+    "patch_window": {
+      "day_of_week": "Sunday",
+      "start_time_utc": "00:00",
+      "duration_hours": 2.0,
+      "timezone": "UTC"
+    },
+    "compensating_controls": [
+      {
+        "control_id": "CTL-MFA-01",
+        "name": "FIDO2 Hardware Token MFA",
+        "description": "Strict multi-factor authentication enforced for all administrative and user sessions",
+        "status": "ACTIVE"
+      }
+    ],
+    "metadata": {
+      "service_role": "Enterprise Remote Access IPsec/SSL VPN Gateway",
+      "device_type": "Firewall Appliance",
+      "geo_redundancy": "active-standby"
+    }
+  },
+  {
+    "asset_id": "ASSET-011",
+    "hostname": "ci-runner-cluster-01.aegis.internal",
+    "asset_type": "CONTAINER",
+    "business_tier": "INTERNAL_OPERATIONAL",
+    "criticality": "MEDIUM",
+    "network_exposure": "INTERNAL",
+    "data_sensitivity": "INTERNAL",
+    "environment": "PRODUCTION",
+    "owner_team": "DevOps Engineering",
+    "patch_window": {
+      "day_of_week": "Saturday",
+      "start_time_utc": "08:00",
+      "duration_hours": 4.0,
+      "timezone": "UTC"
+    },
+    "compensating_controls": [
+      {
+        "control_id": "CTL-SAND-01",
+        "name": "Ephemeral Container Sandboxing",
+        "description": "Build jobs execute in unprivileged disposable namespaces torn down after build",
+        "status": "ACTIVE"
+      }
+    ],
+    "metadata": {
+      "service_role": "Continuous Integration Build Agent",
+      "orchestrator": "Kubernetes",
+      "node_type": "Spot Instance"
+    }
+  },
+  {
+    "asset_id": "ASSET-012",
+    "hostname": "internal-wiki-docs-01.aegis.internal",
+    "asset_type": "APPLICATION",
+    "business_tier": "NON_CRITICAL",
+    "criticality": "LOW",
+    "network_exposure": "INTERNAL",
+    "data_sensitivity": "PUBLIC",
+    "environment": "PRODUCTION",
+    "owner_team": "Corporate IT",
+    "patch_window": {
+      "day_of_week": "Friday",
+      "start_time_utc": "22:00",
+      "duration_hours": 2.0,
+      "timezone": "UTC"
+    },
+    "compensating_controls": [],
+    "metadata": {
+      "service_role": "Internal Employee Knowledge Base & Documentation",
+      "app_framework": "Confluence-Clone",
+      "auth_mode": "SSO-OIDC"
+    }
+  },
+  {
+    "asset_id": "ASSET-013",
+    "hostname": "api-gw-staging-01.aegis.internal",
+    "asset_type": "CLOUD_INSTANCE",
+    "business_tier": "INTERNAL_OPERATIONAL",
+    "criticality": "MEDIUM",
+    "network_exposure": "INTERNET_FACING",
+    "data_sensitivity": "INTERNAL",
+    "environment": "STAGING",
+    "owner_team": "Platform Engineering",
+    "patch_window": {
+      "day_of_week": "Wednesday",
+      "start_time_utc": "14:00",
+      "duration_hours": 3.0,
+      "timezone": "UTC"
+    },
+    "compensating_controls": [
+      {
+        "control_id": "CTL-IP-01",
+        "name": "Developer IP Allowlisting",
+        "description": "Security group restricts ingress to authorized office and developer VPN egress IPs",
+        "status": "ACTIVE"
+      }
+    ],
+    "metadata": {
+      "service_role": "Pre-Production Staging API Gateway",
+      "os_family": "Linux",
+      "cloud_provider": "AWS"
+    }
+  },
+  {
+    "asset_id": "ASSET-014",
+    "hostname": "pay-engine-staging-01.aegis.internal",
+    "asset_type": "SERVER",
+    "business_tier": "INTERNAL_OPERATIONAL",
+    "criticality": "MEDIUM",
+    "network_exposure": "DMZ",
+    "data_sensitivity": "INTERNAL",
+    "environment": "STAGING",
+    "owner_team": "Payment Core Engineering",
+    "patch_window": {
+      "day_of_week": "Thursday",
+      "start_time_utc": "14:00",
+      "duration_hours": 3.0,
+      "timezone": "UTC"
+    },
+    "compensating_controls": [
+      {
+        "control_id": "CTL-NET-02",
+        "name": "Isolated Sandbox VPC",
+        "description": "Network traffic confined to dedicated staging VPC with synthetic payment tokens",
+        "status": "ACTIVE"
+      }
+    ],
+    "metadata": {
+      "service_role": "Staging Payment Processing Sandbox",
+      "mock_data": "enabled"
+    }
+  },
+  {
+    "asset_id": "ASSET-015",
+    "hostname": "dev-app-sandbox-01.aegis.internal",
+    "asset_type": "CONTAINER",
+    "business_tier": "NON_CRITICAL",
+    "criticality": "LOW",
+    "network_exposure": "INTERNAL",
+    "data_sensitivity": "PUBLIC",
+    "environment": "DEVELOPMENT",
+    "owner_team": "Software Engineering",
+    "patch_window": {
+      "day_of_week": "Saturday",
+      "start_time_utc": "12:00",
+      "duration_hours": 6.0,
+      "timezone": "UTC"
+    },
+    "compensating_controls": [],
+    "metadata": {
+      "service_role": "Developer Experimental Feature Sandbox",
+      "orchestrator": "Docker-Compose",
+      "persistence": "ephemeral"
+    }
+  },
+  {
+    "asset_id": "ASSET-016",
+    "hostname": "qa-automation-node-01.aegis.internal",
+    "asset_type": "CLOUD_INSTANCE",
+    "business_tier": "NON_CRITICAL",
+    "criticality": "LOW",
+    "network_exposure": "INTERNAL",
+    "data_sensitivity": "PUBLIC",
+    "environment": "TESTING",
+    "owner_team": "Quality Assurance",
+    "patch_window": {
+      "day_of_week": "Saturday",
+      "start_time_utc": "18:00",
+      "duration_hours": 6.0,
+      "timezone": "UTC"
+    },
+    "compensating_controls": [],
+    "metadata": {
+      "service_role": "End-to-End Automated Regression Runner",
+      "os_family": "Linux",
+      "test_framework": "Playwright"
+    }
+  },
+  {
+    "asset_id": "ASSET-017",
+    "hostname": "airgap-backup-vault-01.aegis.internal",
+    "asset_type": "SERVER",
+    "business_tier": "MISSION_CRITICAL",
+    "criticality": "HIGH",
+    "network_exposure": "AIR_GAPPED",
+    "data_sensitivity": "RESTRICTED",
+    "environment": "PRODUCTION",
+    "owner_team": "Storage & Resiliency",
+    "patch_window": {
+      "day_of_week": "Sunday",
+      "start_time_utc": "06:00",
+      "duration_hours": 4.0,
+      "timezone": "UTC"
+    },
+    "compensating_controls": [
+      {
+        "control_id": "CTL-AIR-01",
+        "name": "Hardware-Enforced Air Gap",
+        "description": "Physical network disconnection with one-way optical data diode for backups",
+        "status": "ACTIVE"
+      }
+    ],
+    "metadata": {
+      "service_role": "Disaster Recovery Immutable Backup Vault",
+      "storage_type": "WORM-Tape-Emulation",
+      "tamper_protection": "active"
+    }
+  },
+  {
+    "asset_id": "ASSET-018",
+    "hostname": "airgap-lab-exploit-01.aegis.internal",
+    "asset_type": "CONTAINER",
+    "business_tier": "NON_CRITICAL",
+    "criticality": "LOW",
+    "network_exposure": "AIR_GAPPED",
+    "data_sensitivity": "PUBLIC",
+    "environment": "TESTING",
+    "owner_team": "Security Research",
+    "patch_window": {
+      "day_of_week": "Daily",
+      "start_time_utc": "04:00",
+      "duration_hours": 8.0,
+      "timezone": "UTC"
+    },
+    "compensating_controls": [
+      {
+        "control_id": "CTL-AIR-02",
+        "name": "Isolated VLAN & Hypervisor Sandbox",
+        "description": "Zero external routable interfaces; testbed reset after each detonation run",
+        "status": "ACTIVE"
+      }
+    ],
+    "metadata": {
+      "service_role": "Isolated Exploit Proof-of-Concept Detonation Lab",
+      "hypervisor": "KVM",
+      "internet_access": "prohibited"
+    }
+  }
+]
